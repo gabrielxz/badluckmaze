@@ -13,7 +13,7 @@ for (var i = 0; i < 13; i++)
 
 function toggleGreenHilight(ev)
 {
-	var green = ev.target.parent.getChildByName('greengrid');
+	var green = ev.target.parent.getChildByName('movegrid');
 	if (green.alpha == 0)
 		green.alpha = 0.5;
 	else
@@ -121,6 +121,8 @@ function addChar(ca,square)
 	var chars = square.getChildByName('char');
 	if (chars.getNumChildren() > 0)
 		return false;
+	ca.x = 0 - Math.floor(ca.image.width/2);
+	ca.y = 0 - ca.image.height;
 	chars.addChild(ca);
 	return true;
 }
@@ -129,4 +131,31 @@ function removeChar(square)
 	var chars = square.getChildByName('char');
 	chars.removeAllChildren();
 	return true;
+}
+
+function clearHighlights()
+{
+	for (var i = 0; i < window.maze.BOARDSIZE; i++)
+	{
+		for (var j = 0; j < window.maze.BOARDSIZE; j++)
+		{
+			window.maze.board[i][j].getChildByName('movegrid').alpha = 0;
+			window.maze.board[i][j].getChildByName('targetgrid').alpha = 0;
+		}
+	}
+}
+
+function setHightlights(rad, type)
+{
+	for (var key in rad)
+	{
+		window.maze.board[rad[key].y][rad[key].x].getChildByName(type + 'grid').alpha = 0.25;
+	}
+}
+
+function testRadius(ev)
+{
+	addChar(ev.target.parent,window.dude[0].image);
+	setHighlights(dude_move_radius(window.dude[0]), 'move');
+	window.maze.stage.update();
 }
