@@ -24,14 +24,22 @@ for (var i = 0; i < window.maze.BOARDSIZE; i++)
 		square.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
 		square.graphics.lineTo(0,window.maze.SQHEIGHT/2+1);
 		square.graphics.lineTo(window.maze.SQWIDTH/2+1,0).endStroke();
+
+		square.x = 0;
+		square.y = 0;
 		
-		square.x = 825 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
-		square.y = (window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
+		square.name = 'basegrid';
 		
-		square.name = 'grid' + i + 'x' + j;
-		window.maze.board[i][j] = square;
+		var grid = new createjs.Container();
+
+		grid.x = 825 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
+		grid.y = (window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
+
+		grid.name = 'grid' + i + 'x' + j;
+		window.maze.board[i][j] = grid;
 		
-		stage.addChild(square);
+		grid.addChild(square);
+		stage.addChild(grid);
 	}
 	stage.update();
 }
