@@ -62,6 +62,8 @@ function init() {
 			square.x = 0;
 			square.y = 0;
 			square.hitArea = hitarea;
+			square.row = j;
+			square.col = i;
 			
 			square.name = 'basegrid';
 			square.addEventListener('click', testRadius);
@@ -106,7 +108,7 @@ function init() {
 			square = new createjs.Container();
 
 			square.x = window.maze.SQWIDTH/2+1;
-			square.y = 0;
+			square.y = Math.floor(window.maze.SQHEIGHT * 0.75);
 
 			square.name = 'char';
 			grid.addChild(square);
@@ -157,6 +159,8 @@ function setHighlights(rad, type)
 function testRadius(ev)
 {
 	addChar(window.dude[0].image,ev.target.parent);
+	window.dude[0].row = ev.target.row;
+	window.dude[0].col = ev.target.col;
 	setHighlights(bl.dude_move_radius(window.dude[0]), 'move');
 	window.maze.stage.update();
 }

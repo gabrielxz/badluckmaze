@@ -51,7 +51,7 @@ bl.archer = function(player, row, col) {
 	} else {
 		ret.image = window.blassets['archer_back'].clone();
 	}
-	ret.bigImage = ret.image = window.blassets['archer_big'].clone();
+	ret.bigImage = window.blassets['archer_big'].clone();
 	ret.image.dude = ret;
 	
 	return ret;
@@ -70,7 +70,7 @@ bl.warrior = function(player, row, col) {
 	} else {
 		ret.image = window.blassets['warrior_back'].clone();
 	}
-	ret.bigImage = ret.image = window.blassets['warrior_big'].clone();
+	ret.bigImage = window.blassets['warrior_big'].clone();
 	ret.image.dude = ret;
 	
 	return ret;
@@ -89,14 +89,14 @@ bl.knight = function(player, row, col) {
 	} else {
 		ret.image = window.blassets['knight_back'].clone();
 	}
-	ret.bigImage = ret.image = window.blassets['knight_big'].clone();
+	ret.bigImage = window.blassets['knight_big'].clone();
 	ret.image.dude = ret;
 	
 	return ret;
 }
 
 bl.dude_move_radius = function(dude) {
-	var j;
+	var j = 0;
 	var radius = new Array();
 
 	for (r = 0; r < 13; r++) {
@@ -111,10 +111,11 @@ bl.dude_move_radius = function(dude) {
 			}
 		}
 	}
+	return radius;
 }
 
 bl.dude_fight_radius = function(dude) {
-	var j;
+	var j = 0;
 	var radius = new Array();
 
 	for (r = 0; r < 13; r++) {
