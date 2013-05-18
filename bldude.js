@@ -34,13 +34,10 @@ archer(player, row, col) {
 	ret.type = 'archer';
 
 	if(ret.owner == 0) {
-		// image front
 		ret.image = window.blassets['archer_front'].clone();
 	} else {
-		// image back
 		ret.image = window.blassets['archer_back'].clone();
 	}
-	// image bust
 	ret.bigImage = ret.image = window.blassets['archer_big'].clone();
 	ret.image.dude = ret;
 	
@@ -57,13 +54,10 @@ warrior(player, row, col) {
 	ret.type = 'warrior';
 
 	if(ret.owner == 0) {
-		// image front
 		ret.image = window.blassets['warrior_front'].clone();
 	} else {
-		// image back
 		ret.image = window.blassets['warrior_back'].clone();
 	}
-	// image bust
 	ret.bigImage = ret.image = window.blassets['warrior_big'].clone();
 	ret.image.dude = ret;
 	
@@ -80,13 +74,10 @@ knight(player, row, col) {
 	ret.type = 'knight';
 
 	if(ret.owner == 0) {
-		// image front
 		ret.image = window.blassets['knight_front'].clone();
 	} else {
-		// image back
 		ret.image = window.blassets['knight_back'].clone();
 	}
-	// image bust
 	ret.bigImage = ret.image = window.blassets['knight_big'].clone();
 	ret.image.dude = ret;
 	
@@ -113,24 +104,15 @@ dude_init() {
 }
 
 function
-dude_get_handle(row, col) {
-	for (var i = 0; i < window.dude.length; i++) {
-		if (window.dude[i].row == row && window.dude[i].col == col) {
-			return i;
-		}
-	}
-}
-
-function
-dude_move_radius(handle) {
+dude_move_radius(dude) {
 	var j;
 	var radius = new Array();
 
 	for (r = 0; r < 13; r++) {
-		rowd = Math.abs(r - window.dude[handle].row);
+		rowd = Math.abs(r - dude.row);
 		for (c = 0; c < 13; c++) {
-			cold = Math.abs(c - window.dude[handle].col);
-			if (rowd + cold <= window.dude[handle].speed) {
+			cold = Math.abs(c - dude.col);
+			if (rowd + cold <= dude.speed) {
 				radius[j] = new Object();
 				radius[j].x = r;
 				radius[j].y = c;
@@ -141,15 +123,15 @@ dude_move_radius(handle) {
 }
 
 function
-dude_fight_radius(handle) {
+dude_fight_radius(dude) {
 	var j;
 	var radius = new Array();
 
 	for (r = 0; r < 13; r++) {
-		rowd = Math.abs(r - window.dude[handle].row);
+		rowd = Math.abs(r - dude.row);
 		for (c = 0; c < 13; c++) {
-			cold = Math.abs(c - window.dude[handle].col);
-			if (rowd + cold <= window.dude[i].range) {
+			cold = Math.abs(c - dude.col);
+			if (rowd + cold <= dude.range) {
 				radius[j] = new Object();
 				radius[j].x = r;
 				radius[j].y = c;
