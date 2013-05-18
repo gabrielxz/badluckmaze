@@ -1,5 +1,6 @@
+window.bl = new Object();
 window.blassets = new Object();
-
+window.dude = new Array();
 
 window.maze = new Object();
 window.maze.SQHEIGHT = 74;
@@ -63,7 +64,7 @@ function init() {
 			square.hitArea = hitarea;
 			
 			square.name = 'basegrid';
-			square.addEventListener('click', toggleGreenHilight);
+			square.addEventListener('click', testRadius);
 			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
 			
 			grid.addChild(square);
@@ -145,7 +146,7 @@ function clearHighlights()
 	}
 }
 
-function setHightlights(rad, type)
+function setHighlights(rad, type)
 {
 	for (var key in rad)
 	{
@@ -155,7 +156,7 @@ function setHightlights(rad, type)
 
 function testRadius(ev)
 {
-	addChar(ev.target.parent,window.dude[0].image);
-	setHighlights(dude_move_radius(window.dude[0]), 'move');
+	addChar(window.dude[0].image,ev.target.parent);
+	setHighlights(bl.dude_move_radius(window.dude[0]), 'move');
 	window.maze.stage.update();
 }

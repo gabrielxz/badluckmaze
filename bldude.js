@@ -1,4 +1,3 @@
-window.blassets = new Object();
 window.blassets['archer_front'] = new createjs.Bitmap('assets/archerfront.png');
 window.blassets['archer_back']  = new createjs.Bitmap('assets/archerback.png');
 window.blassets['archer_big']   = new createjs.Bitmap('assets/archerbig.png');
@@ -9,9 +8,24 @@ window.blassets['warrior_front'] = new createjs.Bitmap('assets/warriorfront.png'
 window.blassets['warrior_back']  = new createjs.Bitmap('assets/warriorback.png');
 window.blassets['warrior_big']   = new createjs.Bitmap('assets/warriorbig.png');
 
+bl.dude_init = function()
+{
+	// Player 0
+	window.dude.push( bl.archer(0, 0, 1));
+	window.dude.push(bl.warrior(0, 0, 5));
+	window.dude.push( bl.knight(0, 0, 6));
+	window.dude.push(bl.warrior(0, 0, 7));
+	window.dude.push( bl.archer(0, 0, 11));
 
-function
-dude(player, row, col) {
+	// Player 1
+	window.dude.push( bl.archer(1, 12, 1));
+	window.dude.push(bl.warrior(1, 12, 5));
+	window.dude.push( bl.knight(1, 12, 6));
+	window.dude.push(bl.warrior(1, 12, 7));
+	window.dude.push( bl.archer(1, 12, 11));
+}
+
+bl.dude = function(player, row, col) {
 	this.owner  = player;
 	this.row    = row;
 	this.col    = col;
@@ -24,9 +38,8 @@ dude(player, row, col) {
 	this.bigImage = null;
 }
 
-function
-archer(player, row, col) {
-	var ret = new dude(player, row, col);
+bl.archer = function(player, row, col) {
+	var ret = new bl.dude(player, row, col);
 	ret.speed  = 2;
 	ret.range  = 3;
 	ret.power  = 4;
@@ -44,9 +57,8 @@ archer(player, row, col) {
 	return ret;
 }
 
-function
-warrior(player, row, col) {
-	var ret = new dude(player, row, col);
+bl.warrior = function(player, row, col) {
+	var ret = new bl.dude(player, row, col);
 	ret.speed  = 2;
 	ret.range  = 1;
 	ret.power  = 8;
@@ -64,9 +76,8 @@ warrior(player, row, col) {
 	return ret;
 }
 
-function
-knight(player, row, col) {
-	var ret = new dude(player, row, col);
+bl.knight = function(player, row, col) {
+	var ret = new bl.dude(player, row, col);
 	ret.speed  = 1;
 	ret.range  = 1;
 	ret.power  = 4;
@@ -84,27 +95,7 @@ knight(player, row, col) {
 	return ret;
 }
 
-function
-dude_init() {
-	window.dude = new Array();
-
-	// Player 0
-	window.dude.push( archer(0, 0, 1));
-	window.dude.push(warrior(0, 0, 5));
-	window.dude.push( knight(0, 0, 6));
-	window.dude.push(warrior(0, 0, 7));
-	window.dude.push( archer(0, 0, 11));
-
-	// Player 1
-	window.dude.push( archer(1, 12, 1));
-	window.dude.push(warrior(1, 12, 5));
-	window.dude.push( knight(1, 12, 6));
-	window.dude.push(warrior(1, 12, 7));
-	window.dude.push( archer(1, 12, 11));
-}
-
-function
-dude_move_radius(dude) {
+bl.dude_move_radius = function(dude) {
 	var j;
 	var radius = new Array();
 
@@ -122,8 +113,7 @@ dude_move_radius(dude) {
 	}
 }
 
-function
-dude_fight_radius(dude) {
+bl.dude_fight_radius = function(dude) {
 	var j;
 	var radius = new Array();
 
@@ -141,3 +131,5 @@ dude_fight_radius(dude) {
 	}
 	return radius;
 }
+
+bl.dude_init();
