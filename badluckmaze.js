@@ -104,7 +104,7 @@ function init() {
 			
 			square = new createjs.Container();
 
-			square.x = window.maze.SQWIDTH/2+1);
+			square.x = window.maze.SQWIDTH/2+1;
 			square.y = 0;
 
 			square.name = 'char';
