@@ -19,7 +19,14 @@ ball.graphics.beginFill("000000").drawCircle(0, 0, 50);
 ball.x = 50;
 ball.y = 200;
 
+createjs.Tween.get(ball, {loop:true}).to({x:450}, 3000).to({x:50}, 3000);
+createjs.Ticker.addEventListener("tick", tick);
+
 stage.addChild(ball);
+//stage.update();
+}
+
+function tick(event){
 stage.update();
 }
 </script>
