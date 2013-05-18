@@ -1,0 +1,10 @@
+window.bl = new Object();
+window.bl.canvas = document.getElementById('myCanvas');
+window.bl.ctx = window.bl.canvas.getContext('2d');
+	var ctx = window.bl.ctx;
+	ctx.moveTo(10,5);
+	ctx.lineTo(90,5);
+	ctx.lineTo(100,50);
+	ctx.lineTo(0,50);
+	ctx.lineTo(10,5);
+	ctx.stroke();
