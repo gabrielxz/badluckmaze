@@ -27,7 +27,7 @@ for (var i = 0; i < window.maze.BOARDSIZE; i++)
 		square.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
 		square.graphics.lineTo(0,window.maze.SQHEIGHT/2+1).endFill();
 		
-		square.x = 800 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
+		square.x = 825 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
 		square.y = (window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
 
 		stage.addChild(square);
