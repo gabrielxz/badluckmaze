@@ -1,106 +1,120 @@
+window.blassets = new Object();
+window.blassets['archer_front'] = new createjs.Bitmap('assets/archerfront.png');
+window.blassets['archer_back']  = new createjs.Bitmap('assets/archerback.png');
+window.blassets['archer_big']   = new createjs.Bitmap('assets/archerbig.png');
+window.blassets['knight_front'] = new createjs.Bitmap('assets/knightfront.png');
+window.blassets['knight_back']  = new createjs.Bitmap('assets/knightback.png');
+window.blassets['knight_big']   = new createjs.Bitmap('assets/knightbig.png');
+window.blassets['warrior_front'] = new createjs.Bitmap('assets/warriorfront.png');
+window.blassets['warrior_back']  = new createjs.Bitmap('assets/warriorback.png');
+window.blassets['warrior_big']   = new createjs.Bitmap('assets/warriorbig.png');
+
 
 function
 dude(player, row, col) {
 	this.owner  = player;
 	this.row    = row;
 	this.col    = col;
-	this.type   = 999;
+	this.type   = 'none';
 	this.speed  = 999;
 	this.range  = 999;
 	this.power  = 999;
 	this.health = 999;
+	this.image  = null;
+	this.bigImage = null;
 }
 
 function
-archer(i) {
-	window.dude[i].speed  = 2;
-	window.dude[i].range  = 3;
-	window.dude[i].power  = 4;
-	window.dude[i].health = 8;
+archer(player, row, col) {
+	var ret = new dude(player, row, col);
+	ret.speed  = 2;
+	ret.range  = 3;
+	ret.power  = 4;
+	ret.health = 8;
+	ret.type = 'archer';
 
-	if(window.dude[i].owner == 0) {
+	if(ret.owner == 0) {
 		// image front
+		ret.image = window.blassets['archer_front'].clone();
 	} else {
 		// image back
+		ret.image = window.blassets['archer_back'].clone();
 	}
 	// image bust
+	ret.bigImage = ret.image = window.blassets['archer_big'].clone();
+	ret.image.dude = ret;
+	
+	return ret;
 }
 
 function
-warrior(i) {
-	window.dude[i].speed  = 2;
-	window.dude[i].range  = 1;
-	window.dude[i].power  = 8;
-	window.dude[i].health = 16;
+warrior(player, row, col) {
+	var ret = new dude(player, row, col);
+	ret.speed  = 2;
+	ret.range  = 1;
+	ret.power  = 8;
+	ret.health = 16;
+	ret.type = 'warrior';
 
-	if(window.dude[i].owner == 0) {
+	if(ret.owner == 0) {
 		// image front
+		ret.image = window.blassets['warrior_front'].clone();
 	} else {
 		// image back
+		ret.image = window.blassets['warrior_back'].clone();
 	}
 	// image bust
+	ret.bigImage = ret.image = window.blassets['warrior_big'].clone();
+	ret.image.dude = ret;
+	
+	return ret;
 }
 
 function
-knight(i) {
-	window.dude[i].speed  = 1;
-	window.dude[i].range  = 1;
-	window.dude[i].power  = 4;
-	window.dude[i].health = 32;
+knight(player, row, col) {
+	var ret = new dude(player, row, col);
+	ret.speed  = 1;
+	ret.range  = 1;
+	ret.power  = 4;
+	ret.health = 32;
+	ret.type = 'knight';
 
-	if(window.dude[i].owner == 0) {
+	if(ret.owner == 0) {
 		// image front
+		ret.image = window.blassets['knight_front'].clone();
 	} else {
 		// image back
+		ret.image = window.blassets['knight_back'].clone();
 	}
 	// image bust
+	ret.bigImage = ret.image = window.blassets['knight_big'].clone();
+	ret.image.dude = ret;
+	
+	return ret;
 }
 
 function
 dude_init() {
 	window.dude = new Array();
-	window.dude.images = new Array();
-	
-	// load all images
 
 	// Player 0
-	window.dude[0] = new dude(0, 0, 1);
-	window.dude[0] = new dude(0, 0, 5);
-	window.dude[0] = new dude(0, 0, 6);
-	window.dude[0] = new dude(0, 0, 7);
-	window.dude[0] = new dude(0, 0, 11);
+	window.dude.push( archer(0, 0, 1));
+	window.dude.push(warrior(0, 0, 5));
+	window.dude.push( knight(0, 0, 6));
+	window.dude.push(warrior(0, 0, 7));
+	window.dude.push( archer(0, 0, 11));
 
 	// Player 1
-	window.dude[0] = new dude(1, 12, 1);
-	window.dude[0] = new dude(1, 12, 5);
-	window.dude[0] = new dude(1, 12, 6);
-	window.dude[0] = new dude(1, 12, 7);
-	window.dude[0] = new dude(1, 12, 11);
-
-	// FIXME remove when we can choose
-	window.dude[0].type = 0; // Archer
-	window.dude[1].type = 1; // Warrior
-	window.dude[2].type = 2; // Knight
-	window.dude[3].type = 1; // Warrior
-	window.dude[4].type = 0; // Archer
-	window.dude[5].type = 0; // Archer
-	window.dude[6].type = 1; // Warrior
-	window.dude[7].type = 2; // Knight
-	window.dude[8].type = 1; // Warrior
-	window.dude[9].type = 0; // Archer
-
-	for (dude = 0; dude < 10; dude++) {
-		switch(window.dude.type[dude]) {
-			case 0: archer(dude); break;
-			case 1: warrior(dude); break;
-			case 2: knight(dude); break;
-		}
-	}
+	window.dude.push( archer(1, 12, 1));
+	window.dude.push(warrior(1, 12, 5));
+	window.dude.push( knight(1, 12, 6));
+	window.dude.push(warrior(1, 12, 7));
+	window.dude.push( archer(1, 12, 11));
 }
 
 function
 dude_get_handle(row, col) {
-	for (var i = 0; i < 10; i++) {
+	for (var i = 0; i < window.dude.length; i++) {
 		if (window.dude[i].row == row && window.dude[i].col == col) {
 			return i;
 		}
@@ -143,4 +157,5 @@ dude_fight_radius(handle) {
 			}
 		}
 	}
+	return radius;
 }

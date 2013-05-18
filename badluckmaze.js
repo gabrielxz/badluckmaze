@@ -1,3 +1,6 @@
+window.blassets = new Object();
+
+
 window.maze = new Object();
 window.maze.SQHEIGHT = 74;
 window.maze.SQWIDTH = 126;
@@ -39,6 +42,7 @@ function init() {
 	{
 		for (var j = 0; j < window.maze.BOARDSIZE; j++)
 		{
+			//grid
 			var grid = new createjs.Container();
 
 			grid.x = 825 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
@@ -47,7 +51,6 @@ function init() {
 			grid.name = 'grid' + i + 'x' + j;
 			window.maze.board[i][j] = grid;
 			
-			//grid
 			var square = new createjs.Shape();
 			square.graphics.beginStroke('000000').moveTo(window.maze.SQWIDTH/2+1,0);
 			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
@@ -65,7 +68,7 @@ function init() {
 			
 			grid.addChild(square);
 
-			//green cover
+			//movement cover
 			square = new createjs.Shape();
 			square.graphics.beginFill('00FF00').moveTo(window.maze.SQWIDTH/2+1,0);
 			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
@@ -77,12 +80,12 @@ function init() {
 			square.x = 0;
 			square.y = 0;
 			
-			square.name = 'greengrid';
+			square.name = 'movegrid';
 			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
 			
 			grid.addChild(square);
 
-			//red cover
+			//target cover
 			square = new createjs.Shape();
 			square.graphics.beginFill('FF0000').moveTo(window.maze.SQWIDTH/2+1,0);
 			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
@@ -94,15 +97,36 @@ function init() {
 			square.x = 0;
 			square.y = 0;
 			
-			square.name = 'redgrid';
+			square.name = 'targetgrid';
 			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
 			
+			grid.addChild(square);
+			
+			square = new createjs.Container();
+
+			square.x = window.maze.SQWIDTH/2+1);
+			square.y = 0;
+
+			square.name = 'char';
 			grid.addChild(square);
 
 			stage.addChild(grid);
 		}
-		stage.update();
 	}
+	stage.update();
 }
 
-
+function addChar(ca,square)
+{
+	var chars = square.getChildByName('char');
+	if (chars.getNumChildren() > 0)
+		return false;
+	chars.addChild(ca);
+	return true;
+}
+function removeChar(square)
+{
+	var chars = square.getChildByName('char');
+	chars.removeAllChildren();
+	return true;
+}
