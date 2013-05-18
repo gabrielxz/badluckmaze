@@ -13,6 +13,8 @@ function init() {
 window.maze.stage = new createjs.Stage("myCanvas");
 var stage = window.maze.stage;
 var fill = '000000';
+queue = new createjs.LoadQueue(false);
+
 
 for (var i = 0; i < window.maze.BOARDSIZE; i++)
 {
@@ -42,5 +44,27 @@ for (var i = 0; i < window.maze.BOARDSIZE; i++)
 		stage.addChild(grid);
 	}
 	stage.update();
+	
+	setupAssets();
+	
+	function setupAssets()
+	{
+		img = new Image();
+		img.onload = handleImageLoad;
+		img.src = "assets/archer_front01.png";
+	}
+
+function handleImageLoad(){
+  bmp = new createjs.Bitmap(img);
+  bmp.regX = img.width;
+  bmp.regY = img.height;
+  bmp.x = 920;
+  bmp.y = 90;
+  stage.addChild(bmp);
+  stage.update();  
+}
+
 }
 }
+
+
