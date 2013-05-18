@@ -49,7 +49,7 @@ dice_ps_to_i(player, side) {
 	return (player * 12) + side;
 
 function
-dice_lose_dot(player) {
+dice_lose_pip(player) {
 	var i, side;
 	do {
 		side = dice_rand(12);
@@ -60,7 +60,7 @@ dice_lose_dot(player) {
 }
 
 function
-dice_gain_dot(player) {
+dice_gain_pip(player) {
 	var i;
 	var r = 0;
 	var removed = new Array();
