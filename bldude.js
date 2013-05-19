@@ -46,6 +46,7 @@ bl.archer = function(player, row, col) {
 	ret.range  = 3;
 	ret.power  = 4;
 	ret.health = 8;
+
 	ret.type = 'archer';
 
 	if(ret.owner == 0) {
@@ -144,7 +145,7 @@ bl.dude_kill = function(dude) {
 
 bl.dudes_alive = function(player) {
 	var d, count = 0;
-	for (var i = 0; i < window.dude.length(); i++) {
+	for (var i = 0; i < window.dude.length; i++) {
 		d = window.dude[i];
 		if (d.owner == player && d.health > 0) {
 			count++;
