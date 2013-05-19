@@ -139,6 +139,7 @@ bl.dude_kill = function(dude) {
 	dude.health = 0;
 	window.maze.board[dude.row][dude.col].getChildByName('char').removeAllChildren();
 	window.maze.stage.update();
+	bl.checkForWin();
 }
 
 bl.dudes_alive = function(player) {
