@@ -60,6 +60,9 @@ bl.onGridClick = function(ev)
 
 		// set top left text objects with dude info
 		console.log("health: "+dude.health);
+		console.log("power: "+dude.power);
+		console.log("speed: "+dude.speed);
+		console.log("range: "+dude.range);
 	}
 
 	switch(bl.GameStatus)
