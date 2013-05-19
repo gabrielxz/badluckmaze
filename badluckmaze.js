@@ -184,18 +184,18 @@ function clearAll()
 
 function setHighlights(squares, type, origin)
 {
+	var square;
+
 	for (var i in squares)
 	{
-		var square = squares[i];
+		square = squares[i];
 		switch (type)
 		{
 			case 'move':
-				square.validMove = true;
 				square.origin = origin;
 				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;
 			case 'target':
-				square.validAttack = true;
 				square.origin = origin;
 				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;

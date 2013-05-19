@@ -2,18 +2,19 @@ bl.GameStatus = 'CharSelection';
 bl.CurrPlayer = 0;
 
 
-bl.validMoves(dude, candidates) 
+bl.validMoves = function(dude, coords) 
 {
 	var coord, square;
 	var valid = Array();
 
-	for (var i in candidates)
+	for (var i in coords)
 	{
-		coord = candidates[i];
+		coord = coords[i];
 		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
 
 		if (!bl.getChar(square))
 		{
+			square.validMove = true;
 			valid.push(square);
 		}
 	}
@@ -25,18 +26,19 @@ bl.validMoves(dude, candidates)
 	return valid;
 }
 
-bl.validAttacks(dude, candidates) 
+bl.validAttacks = function(dude, coords) 
 {
 	var coord, square;
 	var valid = Array();
 
-	for (var i in candidates)
+	for (var i in coords)
 	{
-		coord = candidates[i];
+		coord = coords[i];
 		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
 
 		if (bl.hasEnemyChar(square))
 		{
+			square.validAttack = true;
 			valid.push(square);
 		}
 	}
@@ -50,7 +52,7 @@ bl.validAttacks(dude, candidates)
 		
 bl.onGridClick = function(ev)
 {
-	var dude, highlight;
+	var dude, coords, squares;
 
 	switch(bl.GameStatus)
 	{
