@@ -180,7 +180,20 @@ bl.resetDudes = function()
 
 bl.checkForWin = function()
 {
-	return (bl.dudes_alive(bl.otherPlayer()) <= 0);
+	//return (bl.dudes_alive(bl.otherPlayer()) <= 0);
+	
+	if (bl.dudes_alive(bl.otherPlayer()) <= 0)
+	{
+		if (bl.CurrPlayer == 0)
+		{
+			window.location = "http://www.therandomstore.com/redwins.html";
+		}
+		else
+		{
+			window.location = "http://www.therandomstore.com/redwins.html";
+		}
+	}
+	
 }
 
 bl.turnFinished = function()
