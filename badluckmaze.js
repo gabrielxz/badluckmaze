@@ -86,7 +86,7 @@ function init() {
 			square.hitArea = hitarea;
 			square.row = j;
 			square.col = i;
-			square.alpha = 1;
+			square.alpha = 0;
 			
 			square.name = 'basegrid';
 			square.addEventListener('click', bl.onGridClick);
@@ -274,7 +274,6 @@ function init() {
 	square.name = 'button';
 	square.addEventListener('click', bl.onFightClick);
 	grid.addChild(square);
-
 
 	bl.updateDudes();
 	bl.addTotems();

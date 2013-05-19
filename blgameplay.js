@@ -79,10 +79,7 @@ bl.onGridClick = function(ev)
 			}
 			else if (ev.target.validAttack)
 			{
-				bl.fight(ev.target.origin, bl.getChar(ev.target).dude);
-				alert('Mortal Kombat!!');
-				alert(window.fight.damage + ' damage dealt!');
-				alert('Defender has ' + bl.getChar(ev.target).dude.health);
+				bl.StartFight(ev.target.origin, bl.getChar(ev.target).dude);
 				ev.target.origin.canMove = false;
 				ev.target.origin.canAttack = false;
 			}
