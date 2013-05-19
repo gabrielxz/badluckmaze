@@ -12,5 +12,6 @@ bl.fight = function(attacker, defender) {
 	}
 
 	defender.health -= damage;
+	return damage;
 }
 

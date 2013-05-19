@@ -22,38 +22,39 @@ window.blassets['die_6-4'] = new createjs.Bitmap('assets/die_6-4.png');
 window.blassets['die_6-5'] = new createjs.Bitmap('assets/die_6-5.png');
 
 bl.dice_result = function() {
+	this.imgarr = new Array();
 	this.imgarr[0] = new Array();
-	this.imgarr[0][0] = window.blassets['die_1'].clone;
-	this.imgarr[0][1] = window.blassets['die_0'].clone;
+	this.imgarr[0][0] = window.blassets['die_1'].clone();
+	this.imgarr[0][1] = window.blassets['die_0'].clone();
 	this.imgarr[1] = new Array();
-	this.imgarr[1][0] = window.blassets['die_2'].clone;
-	this.imgarr[1][1] = window.blassets['die_2-1'].clone;
+	this.imgarr[1][0] = window.blassets['die_2'].clone();
+	this.imgarr[1][1] = window.blassets['die_2-1'].clone();
 	this.imgarr[1][2] = this.imgarr[0][1];
 	this.imgarr[2] = new Array();
-	this.imgarr[2][0] = window.blassets['die_3'].clone;
-	this.imgarr[2][1] = window.blassets['die_3-1'].clone;
-	this.imgarr[2][2] = window.blassets['die_3-2'].clone;
+	this.imgarr[2][0] = window.blassets['die_3'].clone();
+	this.imgarr[2][1] = window.blassets['die_3-1'].clone();
+	this.imgarr[2][2] = window.blassets['die_3-2'].clone();
 	this.imgarr[2][3] = this.imgarr[0][1];
 	this.imgarr[3] = new Array();
-	this.imgarr[3][0] = window.blassets['die_4'].clone;
-	this.imgarr[3][1] = window.blassets['die_4-1'].clone;
-	this.imgarr[3][2] = window.blassets['die_4-2'].clone;
-	this.imgarr[3][3] = window.blassets['die_4-3'].clone;
+	this.imgarr[3][0] = window.blassets['die_4'].clone();
+	this.imgarr[3][1] = window.blassets['die_4-1'].clone();
+	this.imgarr[3][2] = window.blassets['die_4-2'].clone();
+	this.imgarr[3][3] = window.blassets['die_4-3'].clone();
 	this.imgarr[3][4] = this.imgarr[0][1];
 	this.imgarr[4] = new Array();
-	this.imgarr[4][0] = window.blassets['die_5'].clone;
-	this.imgarr[4][1] = window.blassets['die_5-1'].clone;
-	this.imgarr[4][2] = window.blassets['die_5-2'].clone;
-	this.imgarr[4][3] = window.blassets['die_5-3'].clone;
-	this.imgarr[4][4] = window.blassets['die_5-4'].clone;
+	this.imgarr[4][0] = window.blassets['die_5'].clone();
+	this.imgarr[4][1] = window.blassets['die_5-1'].clone();
+	this.imgarr[4][2] = window.blassets['die_5-2'].clone();
+	this.imgarr[4][3] = window.blassets['die_5-3'].clone();
+	this.imgarr[4][4] = window.blassets['die_5-4'].clone();
 	this.imgarr[4][5] = this.imgarr[0][1];
 	this.imgarr[5] = new Array();
-	this.imgarr[5][0] = window.blassets['die_6'].clone;
-	this.imgarr[5][1] = window.blassets['die_6-1'].clone;
-	this.imgarr[5][2] = window.blassets['die_6-2'].clone;
-	this.imgarr[5][3] = window.blassets['die_6-3'].clone;
-	this.imgarr[5][4] = window.blassets['die_6-4'].clone;
-	this.imgarr[5][5] = window.blassets['die_6-5'].clone;
+	this.imgarr[5][0] = window.blassets['die_6'].clone();
+	this.imgarr[5][1] = window.blassets['die_6-1'].clone();
+	this.imgarr[5][2] = window.blassets['die_6-2'].clone();
+	this.imgarr[5][3] = window.blassets['die_6-3'].clone();
+	this.imgarr[5][4] = window.blassets['die_6-4'].clone();
+	this.imgarr[5][5] = window.blassets['die_6-5'].clone();
 	this.imgarr[5][6] = this.imgarr[0][1];
 	this.image = null;
 	this.side = 0;
@@ -69,7 +70,7 @@ bl.dice_init = function() {
 	}
 
 	for (var i = 0; i < 4; i++) {
-		window.dice.results.push(new bl.dice_results());
+		window.dice.results.push(new bl.dice_result());
 	}
 }
 
@@ -93,7 +94,6 @@ bl.dice_i_to_curr_val = function(i) {
 	return bl.dice_i_to_base_val(i) - bl.dice_i_to_missing();
 }
 
-function 
 bl.dice_pds_to_i = function(player, die, side) {
 	return (player * 12) + (die * 6) + side;
 }
@@ -133,7 +133,9 @@ bl.dice_roll = function(player, die) {
 	window.dice.results[(player * 2) + die].side = i;
 	base = bl.dice_i_to_base_val(i);
 	missing = bl.dice_i_to_missing(i);
-	img = window.dice.imgarr[base][missing];
+	img = window.dice.results[(player * 2) + die].imgarr[base-1][missing];
 	window.dice.results[(player * 2) + die].image = img;
+	return base - missing;
 }
 
+bl.dice_init();
