@@ -150,7 +150,7 @@ function init() {
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
-	grid.alpha = 1;
+	grid.alpha = 0;
 	stage.addChild(grid);
 	window.maze.modal = grid; 
 
@@ -194,7 +194,7 @@ function init() {
 	grid.addChild(square);
 
 	square = new createjs.Text('Blue Archer', '40pt sans-serif', 'white');
-	square.x = 350;
+	square.x = 355;
 	square.y = 200;
 	square.alpha = 1;
 	square.name = 'attacker'
@@ -251,12 +251,12 @@ function init() {
 	square.name = 'p1stats';
 	grid.addChild(square);
 	
-	//player 1 stats
+	//player 2 stats
 	square = new createjs.Text('+ 4 Power', '30pt sans-serif', 'white');
 	square.x = 670;
 	square.y = 580;
 	square.alpha = 1;
-	square.name = 'p1stats';
+	square.name = 'p2stats';
 	grid.addChild(square);
 	
 	square = new createjs.Shape();
@@ -264,12 +264,15 @@ function init() {
 	square.x = 335;
 	square.y = 490;
 	square.alpha = 1;
+	square.addEventListener('click', bl.onFightClick);
 	grid.addChild(square);
 
 	square = new createjs.Text('Roll', '40pt sans-serif', 'white');
 	square.x = 435;
 	square.y = 500;
 	square.alpha = 1;
+	square.name = 'button';
+	square.addEventListener('click', bl.onFightClick);
 	grid.addChild(square);
 
 
@@ -347,10 +350,16 @@ function testRadius(ev)
 	window.maze.stage.update();
 }
 
-function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
+
+function setFightDice(p2d1,p2d2,p1d1,p1d2,firstRun)
 {
 	var grid = window.maze.fightpage;
 	var square;
+	
+	if (!firstRun)
+	{
+		grid.removeChildAt(3,4,5,6);
+	}
 	
 	var dieY = 480;
 	var dieXsep = 80;
@@ -364,7 +373,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
 	square.alpha = 1;
-	grid.addChild(square);
+	grid.addChildAt(square, 3);
 
 	square = p1d2;
 	square.x = diep1X + dieXsep;
@@ -372,7 +381,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
 	square.alpha = 1;
-	grid.addChild(square);
+	grid.addChildAt(square, 3);
 	
 	//player 2 dice
 	square = p2d1;
@@ -381,7 +390,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
 	square.alpha = 1;
-	grid.addChild(square);
+	grid.addChildAt(square, 3);
 
 	square = p2d2;
 	square.x = diep2X + dieXsep;
@@ -389,5 +398,5 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
 	square.alpha = 1;
-	grid.addChild(square);
+	grid.addChildAt(square, 3);
 }

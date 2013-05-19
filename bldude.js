@@ -47,7 +47,7 @@ bl.archer = function(player, row, col) {
 	ret.power  = 4;
 	ret.health = 8;
 
-	ret.type = 'archer';
+	ret.type = 'Archer';
 
 	if(ret.owner == 0) {
 		ret.image = window.blassets['archer_front'].clone();
@@ -66,7 +66,7 @@ bl.warrior = function(player, row, col) {
 	ret.range  = 1;
 	ret.power  = 8;
 	ret.health = 16;
-	ret.type = 'warrior';
+	ret.type = 'Rogue';
 
 	if(ret.owner == 0) {
 		ret.image = window.blassets['warrior_front'].clone();
@@ -85,7 +85,7 @@ bl.knight = function(player, row, col) {
 	ret.range  = 1;
 	ret.power  = 4;
 	ret.health = 32;
-	ret.type = 'knight';
+	ret.type = 'Warrior';
 
 	if(ret.owner == 0) {
 		ret.image = window.blassets['knight_front'].clone();
