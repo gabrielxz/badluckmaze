@@ -1,7 +1,6 @@
 bl.GameStatus = 'CharSelection';
 bl.CurrPlayer = 0;
-
-
+		
 bl.validMoves = function(dude, coords) 
 {
 	var coord, square;
@@ -22,6 +21,10 @@ bl.validMoves = function(dude, coords)
 	if (valid.length <= 0)
 	{
 		dude.canMove = false;
+	}
+	else
+	{
+		dude.canMove = (true && dude.canMove)
 	}
 	return valid;
 }
@@ -47,9 +50,13 @@ bl.validAttacks = function(dude, coords)
 	{
 		dude.canAttack = false;
 	}
+	else
+	{
+		dude.canAttack = (true && dude.canAttack)
+	}
 	return valid;
 }
-		
+
 bl.onGridClick = function(ev)
 {
 	var dude, coords, squares;
