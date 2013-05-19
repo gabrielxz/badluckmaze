@@ -116,6 +116,7 @@ function init() {
 			stage.addChild(grid);
 		}
 	}
+	bl.updateDudes();
 	stage.update();
 }
 
@@ -136,7 +137,7 @@ function removeChar(square)
 	return true;
 }
 
-function clearHighlights()
+function clearAll()
 {
 	for (var i = 0; i < window.maze.BOARDSIZE; i++)
 	{
@@ -144,6 +145,7 @@ function clearHighlights()
 		{
 			window.maze.board[i][j].getChildByName('movegrid').alpha = 0;
 			window.maze.board[i][j].getChildByName('targetgrid').alpha = 0;
+			window.maze.board[i][j].getChildByName('char').removeAllChildren();
 		}
 	}
 }
