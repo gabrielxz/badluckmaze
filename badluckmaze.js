@@ -150,7 +150,7 @@ function init() {
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
-	grid.alpha = 0;
+	grid.alpha = 1;
 	stage.addChild(grid);
 	window.maze.modal = grid; 
 
@@ -165,7 +165,7 @@ function init() {
 	grid.alpha = 1;
 	grid.x = 480;
 	grid.y = 100;
-	stage.addChild(grid);
+	window.maze.modal.addChild(grid);
 	window.maze.fightpage = grid; 
 
 	square = new createjs.Shape();
@@ -191,6 +191,26 @@ function init() {
 	square.x = 435;
 	square.y = 100;
 	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Text('Blue Archer', '40pt sans-serif', 'white');
+	square.x = 350;
+	square.y = 200;
+	square.alpha = 1;
+	square.name = 'attacker'
+	grid.addChild(square);
+
+	square = new createjs.Text('Deals', '40pt sans-serif', 'white');
+	square.x = 420;
+	square.y = 280;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Text('12 Damage!', '40pt sans-serif', 'white');
+	square.x = 350;
+	square.y = 360;
+	square.alpha = 1;
+	square.name = 'damageDealt'
 	grid.addChild(square);
 	
 	//player 1 unit name
@@ -224,13 +244,35 @@ function init() {
 	grid.addChild(square);
 
 	//player 1 stats
-	square = new createjs.Text('+ 4 Toughness\n= 4 Defense', '18pt sans-serif', 'white');
-	square.x = 200;
-	square.y = 380;
+	square = new createjs.Text('+ 4 Power', '30pt sans-serif', 'white');
+	square.x = 40;
+	square.y = 580;
 	square.alpha = 1;
 	square.name = 'p1stats';
 	grid.addChild(square);
 	
+	//player 1 stats
+	square = new createjs.Text('+ 4 Power', '30pt sans-serif', 'white');
+	square.x = 670;
+	square.y = 580;
+	square.alpha = 1;
+	square.name = 'p1stats';
+	grid.addChild(square);
+	
+	square = new createjs.Shape();
+	square.graphics.beginFill('888888').rect(0,0,300,75);
+	square.x = 335;
+	square.y = 490;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Text('Roll', '40pt sans-serif', 'white');
+	square.x = 435;
+	square.y = 500;
+	square.alpha = 1;
+	grid.addChild(square);
+
+
 	bl.updateDudes();
 	bl.addTotems();
 	stage.update();
@@ -313,11 +355,11 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	var dieY = 480;
 	var dieXsep = 80;
 	var diep1X = 30;
-	var diep2X = 
+	var diep2X = 790;
 	
 	//player 1 dice
 	square = p1d1;
-	square.x = 30;
+	square.x = diep1X;
 	square.y = dieY;
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
@@ -325,7 +367,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	grid.addChild(square);
 
 	square = p1d2;
-	square.x = 110;
+	square.x = diep1X + dieXsep;
 	square.y = dieY;
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
@@ -334,7 +376,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	
 	//player 2 dice
 	square = p2d1;
-	square.x = 595;
+	square.x = diep2X;
 	square.y = dieY;
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;
@@ -342,7 +384,7 @@ function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
 	grid.addChild(square);
 
 	square = p2d2;
-	square.x = 675;
+	square.x = diep2X + dieXsep;
 	square.y = dieY;
 	square.scaleX = 0.5;
 	square.scaleY = 0.5;

@@ -30,4 +30,9 @@ bl.fight = function(attacker, defender) {
 	window.fight.damage  = damage;
 }
 
+bl.StartFight(attacker, defender)
+{
+	
+}
+
 bl.fight_init();
