@@ -11,7 +11,11 @@
 	<script src= "http://code.createjs.com/soundjs-0.4.1.min.js"></script>
   </head>
   <body>
- 
+<div id="background">
+<a href="http://www.therandomstore.com/morrighansdice.html">
+    <img src="assets/morrighan_splash.png" class="stretch" alt="Morrighan's Dice" /></a>
+</div>
+  </body>
 <script>
 	var assetsPath = "assets/";
 	manifest = [
@@ -24,21 +28,13 @@
 	//preload.addEventListener("progress", updateLoading);
 	preload.loadManifest(manifest);
 
-
 function doneLoading()
 {
 	// start the music
     createjs.Sound.play("splashPageMusic");
 }
 
-function btn_onclick() 
-{
-    window.location.href = "http://www.therandomstore.com/morrighansdice.html";
-}
 
 </script>
-<img src="assets/MorrighanDice.png" alt="Morrighan's Dice">
-<br/>
-<a href="#" class="myButton">Play!</a>
-  </body>
+
 </html>
