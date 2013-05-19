@@ -35,14 +35,25 @@ bl.totem_init = function() {
 }
 
 bl.totem_hit = function(dude, totem) {
-	if(dude.owner == totem.owner) {
+	var newOwner, oldOwner;
+	
+	if (dude)
+	{
+		newOwner = dude.owner;
+	}
+	else
+	{
+		newOwner = bl.otherPlayer(totem.owner);
+	}
+
+	if(newOwner == totem.owner) {
 		return;
 	}
 
 	// Return pips
 	if(totem.owner != null) {
 		for(var i = 0; i < totem.bl; i++) {
-			bl.dice_gain_pip(dude.owner);
+			bl.dice_gain_pip(newOwner);
 		}
 		for(var i = 0; i < totem.gl; i++) {
 			bl.dice_lose_pip(totem.owner);
@@ -51,17 +62,32 @@ bl.totem_hit = function(dude, totem) {
 
 	// Take pips
 	for(var i = 0; i < totem.gl; i++) {
-		bl.dice_gain_pip(dude.owner);
+		bl.dice_gain_pip(newOwner);
 	}
 	for(var i = 0; i < totem.bl; i++) {
 		bl.dice_lose_pip(totem.owner);
 	}
 
-	totem.owner = dude.owner;
-	if(totem.owner == 0) {
+	if (dude)
+	{
+		totem.owner = newOwner;
+	}
+	else
+	{
+		totem.owner = null;
+	}
+	
+	if(totem.owner == 0)
+	{
 		totem.image = totem.image_red;
-	} else {
+	}
+	else if (totem.owner == 1)
+	{
 		totem.image = totem.image_blue;
+	}
+	else
+	{
+		totem.image = totem.image_dark;
 	}
 }
 
@@ -69,7 +95,7 @@ bl.addTotems = function()
 {
 	for (var x in window.totem)
 	{
-		bl.addTotem(totem[x].image,window.maze.board[totem[x].row][totem[x].col]);
+		bl.addTotem(totem[x].image,window.maze.board[totem[x].row][totem[x].col], window.totem[x].gl);
 	}
 }
 
@@ -78,20 +104,22 @@ bl.updateTotems = function()
 	for (var x in window.totem)
 	{
 		var square = window.maze.board[totem[x].row][totem[x].col];
-		if (bl.hasActiveChar()  || window.totem[x].)
+		if (bl.hasActiveChar()  || 
+		    (window.totem[x].gl > 0 && window.totem[x].owner != null))
 		{
 			square.misc.removeAllChildren();
-			bl.totem_hit(bl.getChar(square).dude, window.totem[x]);
-			bl.addTotem(window.totem[x].image, square);
+			var ch = bl.getChar(square);
+			bl.totem_hit((ch ? ch.dude : null), window.totem[x]);
+			bl.addTotem(window.totem[x].image, square, window.totem[x].gl);
 		}
 	}
 }
 
-bl.addTotem = function(ca,square)
+bl.addTotem = function(ca, square, isCenter)
 {
 	var misc = square.getChildByName('misc');
 	ca.x = 0 - Math.floor(ca.image.width/2);
-	ca.y = 0 - ca.image.height;
+	ca.y = (isCenter ? 25 : 10) - ca.image.height;
 	misc.addChild(ca);
 	return true;
 }

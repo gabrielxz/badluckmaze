@@ -147,6 +147,108 @@ function init() {
 			stage.addChild(grid);
 		}
 	}
+	//modal cover sheet
+	grid = new createjs.Container();
+	grid.name = 'modal'
+	grid.alpha = 1;
+	stage.addChild(grid);
+	window.maze.modal = grid; 
+
+	square = new createjs.Shape();
+	square.graphics.beginFill('FFFFFF').rect(0,0,stage.canvas.width,stage.canvas.height);
+	square.alpha = 0.5;
+	grid.addChild(square);
+
+	//fight page
+	grid = new createjs.Container();
+	grid.name = 'fightpage'
+	grid.alpha = 1;
+	grid.x = 580;
+	grid.y = 200;
+	stage.addChild(grid);
+	window.maze.fightpage = grid; 
+
+	square = new createjs.Shape();
+	square.graphics.beginFill('000000').rect(0,0,800,500);
+	square.alpha = 1;
+	grid.addChild(square);
+	
+	//player 1 portrait
+	square = new createjs.Shape();
+	square.graphics.beginFill('0000FF').rect(40,70,250,300);
+	square.alpha = 1;
+	grid.addChild(square);
+	
+	//player 2 portrait
+	square = new createjs.Shape();
+	square.graphics.beginFill('FF0000').rect(510,70,250,300);
+	square.alpha = 1;
+	grid.addChild(square);
+
+	//player 1 dice
+	square = new createjs.Bitmap('assets/dice/die_0.png');
+	square.x = 30;
+	square.y = 380;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Bitmap('assets/dice/die_0.png');
+	square.x = 110;
+	square.y = 380;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+	
+	//player 2 dice
+	square = new createjs.Bitmap('assets/dice/die_0.png');
+	square.x = 595;
+	square.y = 380;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Bitmap('assets/dice/die_0.png');
+	square.x = 675;
+	square.y = 380;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = new createjs.Text('VS.', '50pt sans-serif', 'white');
+	square.x = 335;
+	square.y = 200;
+	square.alpha = 1;
+	grid.addChild(square);
+	
+	//player 1 unit name
+	square = new createjs.Text('Blue Archer', '25pt sans-serif', 'white');
+	square.x = 70;
+	square.y = 20;
+	square.alpha = 1;
+	square.name = 'p1name';
+	grid.addChild(square);
+	
+	//player 2 unit name
+	square = new createjs.Text('Red Archer', '25pt sans-serif', 'white');
+	square.x = 550;
+	square.y = 20;
+	square.alpha = 1;
+	square.name = 'p2name';
+	grid.addChild(square);
+	
+	//player 1 stats
+	square = new createjs.Text('+ 4 Toughness\n= 4 Defense', '18pt sans-serif', 'white');
+	square.x = 200;
+	square.y = 380;
+	square.alpha = 1;
+	square.name = 'p1stats';
+	grid.addChild(square);
+	
 	bl.updateDudes();
 	bl.addTotems();
 	stage.update();
