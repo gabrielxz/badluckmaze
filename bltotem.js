@@ -103,9 +103,8 @@ bl.updateTotems = function()
 			var ch = bl.getChar(square);
 			square = window.maze.board[t.row][t.col];
 			console.log(square);
-			//square.getChildByName('misc').removeAllChildren();
 			bl.totem_hit(ch.dude, t);
-			//bl.addTotem(t.image, square, t.center);
+			bl.addTotem(t.image, square, t.center);
 		}
 	}
 }
@@ -113,9 +112,11 @@ bl.updateTotems = function()
 bl.addTotem = function(img, square, isCenter)
 {
 	var misc = square.getChildByName('misc');
+	misc.removeAllChildren();
 	img.x = 0 - Math.floor(img.image.width/2);
 	img.y = (isCenter ? 25 : 10) - img.image.height;
 	misc.addChild(img);
+	window.maze.stage.update();
 	return true;
 }
 

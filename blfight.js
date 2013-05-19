@@ -25,8 +25,8 @@ bl.fight = function(attacker, defender) {
 		bl.dude_kill(defender);
 	}
 
-	window.fight.offense = offense;
-	window.fight.defense = defense;
+	window.fight.offense_roll = offense;
+	window.fight.defense_roll = defense;
 	window.fight.damage  = damage;
 }
 
