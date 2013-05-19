@@ -25,7 +25,7 @@ function toggleGreenHilight(ev)
 function init() {
 	window.maze.stage = new createjs.Stage("myCanvas");
 	var stage = window.maze.stage;
-
+	
 	// grid
 	var hitarea = new createjs.Shape();
 	hitarea.graphics.beginFill('000000').moveTo(window.maze.SQWIDTH/2+1,0);
@@ -38,6 +38,8 @@ function init() {
 	hitarea.y = 0;
 	
 	hitarea.name = 'hitarea';
+	
+
 	
 	for (var i = 0; i < window.maze.BOARDSIZE; i++)
 	{
@@ -122,7 +124,13 @@ function init() {
 	// begin loading content (only sounds to load)
 	var assetsPath = "assets/";
 	manifest = [
-		{id:"movement", src:assetsPath+"movement.mp3"}
+		{id:"movement", src:assetsPath+"movement.mp3"}, {id:"mainGameMusic", src:assetsPath+"mainGameMusic.mp3"},
+		{id:"archerAttack", src:assetsPath+"archerAttack2.mp3"},{id:"blueWins", src:assetsPath+"blueWins.mp3"},
+		{id:"death", src:assetsPath+"deathScream.mp3"},{id:"diceRoll", src:assetsPath+"diceRoll.mp3"},
+		{id:"fightPopupTransition", src:assetsPath+"fightPopupTransition.mp3"},{id:"morrighanTotem", src:assetsPath+"morrighanTotem.mp3"},
+		{id:"nomofo", src:assetsPath+"nomofo.mp3"},{id:"redWins", src:assetsPath+"redWins.mp3"},
+		{id:"splashPageMusic", src:assetsPath+"splashPageMusic.mp3"},{id:"warriorAttack", src:assetsPath+"warriorAttack.mp3"},
+		{id:"knightAttack", src:assetsPath+"knightAttack.mp3"}
 	];
 
 	preload = new createjs.LoadQueue();
@@ -135,7 +143,7 @@ function init() {
 function doneLoading()
 {
 	// start the music
-    createjs.Sound.play("movement");
+    //createjs.Sound.play("mainGameMusic");
 }
 
 function addChar(ca,square)
