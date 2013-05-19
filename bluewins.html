@@ -1,0 +1,40 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blue Wins</title>
+    <link rel="stylesheet" href="morrighansdice.css">
+	<script src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
+	<script src= "http://code.createjs.com/soundjs-0.4.1.min.js"></script>
+  </head>
+  <body>
+<div id="background">
+<a href="http://www.therandomstore.com/morrighansdice.html">
+    <img src="assets/bluewins.jpg" class="stretch" alt="Morrighan's Dice" /></a>
+</div>
+  </body>
+<script>
+	var assetsPath = "assets/";
+	manifest = [
+		{id:"bluewins", src:assetsPath+"bluewins.mp3"}
+	];
+
+	preload = new createjs.LoadQueue();
+	preload.installPlugin(createjs.Sound);
+	preload.addEventListener("complete", doneLoading);
+	//preload.addEventListener("progress", updateLoading);
+	preload.loadManifest(manifest);
+
+function doneLoading()
+{
+	// start the music
+    createjs.Sound.play("bluewins", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 1, 0);
+}
+
+
+</script>
+
+</html>
