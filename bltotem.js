@@ -1,6 +1,9 @@
 window.blassets['totem_dark'] = new createjs.Bitmap('assets/totemdark.png');
 window.blassets['totem_red'] = new createjs.Bitmap('assets/totemred.png');
 window.blassets['totem_blue'] = new createjs.Bitmap('assets/totemblue.png');
+window.blassets['center_dark'] = new createjs.Bitmap('assets/centerdark.png');
+window.blassets['center_red'] = new createjs.Bitmap('assets/centerred.png');
+window.blassets['center_blue'] = new createjs.Bitmap('assets/centerblue.png');
 
 function
 totem(row, col, bl, gl) {
@@ -9,9 +12,15 @@ totem(row, col, bl, gl) {
 	this.col   = col;
 	this.bl    = bl;
 	this.gl    = gl;
-	this.image_dark = window.blassets['totem_dark'].clone();
-	this.image_red  = window.blassets['totem_red'].clone();
-	this.image_blue = window.blassets['totem_blue'].clone();
+	if(row == 6 && col == 6) {
+		this.image_dark = window.blassets['center_dark'].clone();
+		this.image_red  = window.blassets['center_red'].clone();
+		this.image_blue = window.blassets['center_blue'].clone();
+	} else {
+		this.image_dark = window.blassets['totem_dark'].clone();
+		this.image_red  = window.blassets['totem_red'].clone();
+		this.image_blue = window.blassets['totem_blue'].clone();
+	}
 	this.image = this.image_dark;
 }
 
