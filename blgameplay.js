@@ -114,6 +114,7 @@ bl.endTurn = function()
 	bl.GameStatus = 'CharSelection';
 	bl.resetDudes();
 	clearAll();
+	bl.updateTotems();
 }
 
 bl.hasActiveChar = function(square)
