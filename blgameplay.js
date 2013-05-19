@@ -13,6 +13,7 @@ bl.onGridClick = function(ev)
 				ev.target.origin.row = ev.target.row;
 				ev.target.origin.col = ev.target.col;
 				ev.target.origin.canMove = false;
+				createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
 			}
 			else if (ev.target.validAttack)
 			{
