@@ -42,9 +42,14 @@ bl.onGridClick = function(ev)
 	window.maze.stage.update();
 }
 
+bl.otherPlayer = function()
+{
+	return (bl.CurrPlayer ? 0 : 1);
+}
+
 bl.endTurn = function()
 {
-	bl.CurrPlayer = (bl.CurrPlayer ? 0 : 1);
+	bl.CurrPlayer = bl.otherPlayer();
 	bl.GameStatus = 'CharSelection';
 	bl.resetDudes();
 	clearAll();
@@ -99,3 +104,9 @@ bl.resetDudes = function()
 		d.canAttack = true;
 	}
 }
+
+bl.checkForWin = function()
+{
+	return (bl.dudes_alive(bl.otherPlayer()) <= 0);
+}
+
