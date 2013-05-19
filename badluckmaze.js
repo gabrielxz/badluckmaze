@@ -3,9 +3,11 @@ window.blassets = new Object();
 window.dude = new Array();
 
 window.maze = new Object();
-window.maze.SQHEIGHT = 66;
-window.maze.SQWIDTH = 110;
+window.maze.SQHEIGHT = 64;
+window.maze.SQWIDTH = 109;
 window.maze.BOARDSIZE = 13;
+window.maze.VOFFSET = 110;
+window.maze.HOFFSET = 960;
 window.maze.board = new Array();
 for (var i = 0; i < window.maze.BOARDSIZE; i++)
 {
@@ -26,6 +28,9 @@ function init() {
 	window.maze.stage = new createjs.Stage("myCanvas");
 	var stage = window.maze.stage;
 
+	var board = new createjs.Bitmap('assets/board.png');
+	stage.addChild(board);
+	
 	// begin loading sounds - Gabriel's code
 	var assetsPath = "assets/";
 	manifest = [
@@ -63,8 +68,8 @@ function init() {
 			//grid
 			var grid = new createjs.Container();
 
-			grid.x = 825 + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
-			grid.y = (window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
+			grid.x = window.maze.HOFFSET + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
+			grid.y = window.maze.VOFFSET +(window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
 
 			grid.name = 'grid' + i + 'x' + j;
 			window.maze.board[i][j] = grid;
@@ -81,6 +86,7 @@ function init() {
 			square.hitArea = hitarea;
 			square.row = j;
 			square.col = i;
+			square.alpha = 0;
 			
 			square.name = 'basegrid';
 			square.addEventListener('click', bl.onGridClick);
