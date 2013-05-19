@@ -281,7 +281,7 @@ function init() {
 function doneLoading()
 {
 	// start the music
-    createjs.Sound.play("mainGameMusic", createjs.Sound.INTERRUPT_NONE, 0, 10000, 0, 0.3, 0);
+    createjs.Sound.play("mainGameMusic", createjs.Sound.INTERRUPT_NONE, 0, 10000, 0, 0.1, 0);
 }
 
 function addChar(ca,square)

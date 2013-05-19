@@ -19,7 +19,7 @@
 <script>
 	var assetsPath = "assets/";
 	manifest = [
-		{id:"splashPageMusic", src:assetsPath+"splashPageMusic.mp3"}
+		{id:"morrighantotem", src:assetsPath+"morrighantotem.mp3"}
 	];
 
 	preload = new createjs.LoadQueue();
@@ -31,7 +31,7 @@
 function doneLoading()
 {
 	// start the music
-    createjs.Sound.play("splashPageMusic");
+    createjs.Sound.play("morrighantotem", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.25, 0);
 }
 
 
