@@ -162,85 +162,67 @@ function init() {
 	//fight page
 	grid = new createjs.Container();
 	grid.name = 'fightpage'
-	grid.alpha = 0;
-	grid.x = 580;
-	grid.y = 200;
+	grid.alpha = 1;
+	grid.x = 480;
+	grid.y = 100;
 	stage.addChild(grid);
 	window.maze.fightpage = grid; 
 
 	square = new createjs.Shape();
-	square.graphics.beginFill('000000').rect(0,0,800,500);
+	square.graphics.beginFill('000000').rect(0,0,1000,700);
 	square.alpha = 1;
 	grid.addChild(square);
 	
 	//player 1 portrait
 	square = new createjs.Shape();
-	square.graphics.beginFill('0000FF').rect(40,70,250,300);
+	square.graphics.beginFill('0000FF').rect(40,70,300,400);
 	square.alpha = 1;
 	grid.addChild(square);
 	
 	//player 2 portrait
 	square = new createjs.Shape();
-	square.graphics.beginFill('FF0000').rect(510,70,250,300);
+	square.graphics.beginFill('FF0000').rect(660,70,300,400);
 	square.alpha = 1;
 	grid.addChild(square);
 
-	//player 1 dice
-	square = new createjs.Bitmap('assets/dice/die_0.png');
-	square.x = 30;
-	square.y = 380;
-	square.scaleX = 0.5;
-	square.scaleY = 0.5;
-	square.alpha = 1;
-	grid.addChild(square);
-
-	square = new createjs.Bitmap('assets/dice/die_0.png');
-	square.x = 110;
-	square.y = 380;
-	square.scaleX = 0.5;
-	square.scaleY = 0.5;
-	square.alpha = 1;
-	grid.addChild(square);
-	
-	//player 2 dice
-	square = new createjs.Bitmap('assets/dice/die_0.png');
-	square.x = 595;
-	square.y = 380;
-	square.scaleX = 0.5;
-	square.scaleY = 0.5;
-	square.alpha = 1;
-	grid.addChild(square);
-
-	square = new createjs.Bitmap('assets/dice/die_0.png');
-	square.x = 675;
-	square.y = 380;
-	square.scaleX = 0.5;
-	square.scaleY = 0.5;
-	square.alpha = 1;
-	grid.addChild(square);
+	setFightDice(window.blassets['die_1'].clone(),window.blassets['die_1'].clone(),window.blassets['die_1'].clone(),window.blassets['die_1'].clone());	
 
 	square = new createjs.Text('VS.', '50pt sans-serif', 'white');
-	square.x = 335;
-	square.y = 200;
+	square.x = 435;
+	square.y = 100;
 	square.alpha = 1;
 	grid.addChild(square);
 	
 	//player 1 unit name
 	square = new createjs.Text('Blue Archer', '25pt sans-serif', 'white');
-	square.x = 70;
+	square.x = 50;
 	square.y = 20;
 	square.alpha = 1;
 	square.name = 'p1name';
 	grid.addChild(square);
 	
+	square = new createjs.Text('42 HP', '25pt sans-serif', 'white');
+	square.x = 250;
+	square.y = 20;
+	square.alpha = 1;
+	square.name = 'p1hp';
+	grid.addChild(square);
+	
 	//player 2 unit name
 	square = new createjs.Text('Red Archer', '25pt sans-serif', 'white');
-	square.x = 550;
+	square.x = 670;
 	square.y = 20;
 	square.alpha = 1;
 	square.name = 'p2name';
 	grid.addChild(square);
 	
+	square = new createjs.Text('42 HP', '25pt sans-serif', 'white');
+	square.x = 870;
+	square.y = 20;
+	square.alpha = 1;
+	square.name = 'p2hp';
+	grid.addChild(square);
+
 	//player 1 stats
 	square = new createjs.Text('+ 4 Toughness\n= 4 Defense', '18pt sans-serif', 'white');
 	square.x = 200;
@@ -321,4 +303,49 @@ function testRadius(ev)
 	window.dude[0].col = ev.target.col;
 	setHighlights(bl.dude_move_radius(window.dude[0]), 'move');
 	window.maze.stage.update();
+}
+
+function setFightDice(p1d1,p1d2,p2d1,p2d2,firstRun)
+{
+	var grid = window.maze.fightpage;
+	var square;
+	
+	var dieY = 480;
+	var dieXsep = 80;
+	var diep1X = 30;
+	var diep2X = 
+	
+	//player 1 dice
+	square = p1d1;
+	square.x = 30;
+	square.y = dieY;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = p1d2;
+	square.x = 110;
+	square.y = dieY;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+	
+	//player 2 dice
+	square = p2d1;
+	square.x = 595;
+	square.y = dieY;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
+
+	square = p2d2;
+	square.x = 675;
+	square.y = dieY;
+	square.scaleX = 0.5;
+	square.scaleY = 0.5;
+	square.alpha = 1;
+	grid.addChild(square);
 }
