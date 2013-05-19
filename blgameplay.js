@@ -59,10 +59,12 @@ bl.onGridClick = function(ev)
 		dude = ch.dude;
 
 		// set top left text objects with dude info
+		console.log("Selected dude's stats...");
 		console.log("health: "+dude.health);
 		console.log("power: "+dude.power);
 		console.log("speed: "+dude.speed);
 		console.log("range: "+dude.range);
+		
 	}
 
 	switch(bl.GameStatus)
