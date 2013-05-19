@@ -56,8 +56,7 @@ bl.dice_result = function() {
 	this.imgarr[5][4] = window.blassets['die_6-4'].clone();
 	this.imgarr[5][5] = window.blassets['die_6-5'].clone();
 	this.imgarr[5][6] = this.imgarr[0][1];
-	this.image = null;
-	this.side = 0;
+	this.image = this.imgarr[0][0];
 }
 
 bl.dice_init = function() {
@@ -127,14 +126,14 @@ bl.dice_gain_pip = function(player) {
 }
 
 bl.dice_roll = function(player, die) {
-	var i, base, missing;
+	var i, ri, base, missing;
 
+	ri = (player * 2) + die;
 	i = bl.dice_pds_to_i(player, 0, bl.dice_rand(6));
-	window.dice.results[(player * 2) + die].side = i;
 	base = bl.dice_i_to_base_val(i);
 	missing = bl.dice_i_to_missing(i);
-	img = window.dice.results[(player * 2) + die].imgarr[base-1][missing];
-	window.dice.results[(player * 2) + die].image = img;
+	img = window.dice.results[ri].imgarr[base-1][missing];
+	window.dice.results[ri].image = img;
 	return base - missing;
 }
 
