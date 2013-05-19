@@ -36,6 +36,8 @@ bl.dude = function(player, row, col) {
 	this.health = 999;
 	this.image  = null;
 	this.bigImage = null;
+	this.canAttack = true;
+	this.canMove = true;
 }
 
 bl.archer = function(player, row, col) {

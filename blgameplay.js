@@ -4,14 +4,36 @@ bl.CurrPlayer = 0;
 
 bl.onGridClick = function(ev)
 {
-	switch(GameStatus)
+	switch(bl.GameStatus)
 	{
-		case 'Player1CharSelection':
+		case 'CharSelected':
+			if (ev.target.validMove)
+			{
+				addChar(ev.target.origin.image, ev.target.parent);
+				ev.target.origin.row = ev.target.row;
+				ev.target.origin.col = ev.target.col;
+				ev.target.origin.canMove = false;
+			}
+			else if (ev.target.validAttack)
+			{
+				//StartCombat()
+				alert('Mortal Kombat!!');
+				ev.target.origin.canAttack = false;
+			}
+		case 'CharSelection':
 			clearAll();
 			bl.updateDudes();
-			if (hasActiveChar(ev.target))
+			if (bl.hasActiveChar(ev.target))
 			{
-				setHighlights(bl.dude_move_radius(getChar(ev.target).dude), 'move');
+				if (bl.getChar(ev.target).dude.canMove)
+					setHighlights(bl.dude_move_radius(bl.getChar(ev.target).dude), 'move', bl.getChar(ev.target).dude);
+				if (bl.getChar(ev.target).dude.canAttack)
+					setHighlights(bl.dude_fight_radius(bl.getChar(ev.target).dude), 'target', bl.getChar(ev.target).dude);
+				bl.GameStatus = 'CharSelected';
+			}
+			else
+			{
+			    bl.GameStatus = 'CharSelection';
 			}
 			break;
 	}
@@ -20,13 +42,20 @@ bl.onGridClick = function(ev)
 
 bl.hasActiveChar = function(square)
 {
-	var ch = square.parent.getChildByName('char');
+	var ch = bl.getChar(square);
 	if (ch == null)
 		return false;
-	if (ch.getNumChildren() < 1)
+	if (ch.dude.owner == bl.CurrPlayer)
+		return true;
+	return false;
+}
+
+bl.hasEnemyChar = function(square)
+{
+	var ch = bl.getChar(square);
+	if (ch == null)
 		return false;
-	ch = ch.getChildAt(0);
-	if (ch.dude.player == bl.CurrPlayer)
+	if (ch.dude.owner != bl.CurrPlayer)
 		return true;
 	return false;
 }

@@ -3,11 +3,11 @@ window.blassets = new Object();
 window.dude = new Array();
 
 window.maze = new Object();
-window.maze.SQHEIGHT = 74;
-window.maze.SQWIDTH = 126;
+window.maze.SQHEIGHT = 66;
+window.maze.SQWIDTH = 110;
 window.maze.BOARDSIZE = 13;
 window.maze.board = new Array();
-for (var i = 0; i < 13; i++)
+for (var i = 0; i < window.maze.BOARDSIZE; i++)
 {
 	window.maze.board[i] = new Array();
 }
@@ -66,7 +66,7 @@ function init() {
 			square.col = i;
 			
 			square.name = 'basegrid';
-			square.addEventListener('click', testRadius);
+			square.addEventListener('click', bl.onGridClick);
 			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
 			
 			grid.addChild(square);
@@ -146,15 +146,37 @@ function clearAll()
 			window.maze.board[i][j].getChildByName('movegrid').alpha = 0;
 			window.maze.board[i][j].getChildByName('targetgrid').alpha = 0;
 			window.maze.board[i][j].getChildByName('char').removeAllChildren();
+			window.maze.board[i][j].getChildByName('basegrid').validMove = false;
+			window.maze.board[i][j].getChildByName('basegrid').validAttack = false;
+			window.maze.board[i][j].getChildByName('basegrid').origin = null;
 		}
 	}
 }
 
-function setHighlights(rad, type)
+function setHighlights(rad, type, origin)
 {
 	for (var key in rad)
 	{
-		window.maze.board[rad[key].y][rad[key].x].getChildByName(type + 'grid').alpha = 0.25;
+		var square = window.maze.board[rad[key].y][rad[key].x].getChildByName('basegrid');
+		switch (type)
+		{
+			case 'move':
+				if (!bl.getChar(square))
+				{
+					square.validMove = true;
+					square.origin = origin;
+					square.parent.getChildByName(type + 'grid').alpha = 0.25;
+				}
+			break;
+			case 'target':
+				if (bl.hasEnemyChar(square))
+				{
+					square.validAttack = true;
+					square.origin = origin;
+					square.parent.getChildByName(type + 'grid').alpha = 0.25;
+				}
+			break;
+		}
 	}
 }
 
