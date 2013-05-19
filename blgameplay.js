@@ -19,7 +19,7 @@ bl.validMoves = function(dude, coords)
 		}
 	}
 
-	if (valid.length() <= 0)
+	if (valid.length <= 0)
 	{
 		dude.canMove = false;
 	}
@@ -43,7 +43,7 @@ bl.validAttacks = function(dude, coords)
 		}
 	}
 
-	if (valid.length() <= 0)
+	if (valid.length <= 0)
 	{
 		dude.canAttack = false;
 	}
@@ -89,7 +89,7 @@ bl.onGridClick = function(ev)
 				}
 				if (dude.canAttack)
 				{
-					coords = bl.dude_attack_radius(dude);
+					coords = bl.dude_fight_radius(dude);
 					squares = bl.validAttacks(dude, coords);
 					setHighlights(squares, 'target', dude);
 				}
