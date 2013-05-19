@@ -139,6 +139,7 @@ bl.dude_fight_radius = function(dude) {
 bl.dude_kill = function(dude) {
 	dude.health = 0;
 	window.maze.board[dude.row][dude.col].getChildByName('char').removeAllChildren();
+	createjs.Sound.play("deathScream", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.75, 0);
 	window.maze.stage.update();
 	bl.checkForWin();
 }
