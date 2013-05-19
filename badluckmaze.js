@@ -150,7 +150,7 @@ function init() {
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
-	grid.alpha = 1;
+	grid.alpha = 0;
 	stage.addChild(grid);
 	window.maze.modal = grid; 
 
@@ -162,7 +162,7 @@ function init() {
 	//fight page
 	grid = new createjs.Container();
 	grid.name = 'fightpage'
-	grid.alpha = 1;
+	grid.alpha = 0;
 	grid.x = 580;
 	grid.y = 200;
 	stage.addChild(grid);

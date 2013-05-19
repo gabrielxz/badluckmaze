@@ -22,10 +22,6 @@ bl.validMoves = function(dude, coords)
 	{
 		dude.canMove = false;
 	}
-	else
-	{
-		dude.canMove = (true && dude.canMove)
-	}
 	return valid;
 }
 
@@ -49,10 +45,6 @@ bl.validAttacks = function(dude, coords)
 	if (valid.length <= 0 && !dude.canMove)
 	{
 		dude.canAttack = false;
-	}
-	else
-	{
-		dude.canAttack = (true && dude.canAttack)
 	}
 	return valid;
 }
