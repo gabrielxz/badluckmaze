@@ -2,17 +2,66 @@ bl.GameStatus = 'CharSelection';
 bl.CurrPlayer = 0;
 
 
+bl.validMoves(dude, candidates) 
+{
+	var coord, square;
+	var valid = Array();
+
+	for (var i in candidates)
+	{
+		coord = candidates[i];
+		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
+
+		if (!bl.getChar(square))
+		{
+			valid.push(square);
+		}
+	}
+
+	if (valid.length() <= 0)
+	{
+		dude.canMove = false;
+	}
+	return valid;
+}
+
+bl.validAttacks(dude, candidates) 
+{
+	var coord, square;
+	var valid = Array();
+
+	for (var i in candidates)
+	{
+		coord = candidates[i];
+		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
+
+		if (bl.hasEnemyChar(square))
+		{
+			valid.push(square);
+		}
+	}
+
+	if (valid.length() <= 0)
+	{
+		dude.canAttack = false;
+	}
+	return valid;
+}
+		
 bl.onGridClick = function(ev)
 {
+	var dude, highlight;
+
 	switch(bl.GameStatus)
 	{
 		case 'CharSelected':
 			if (ev.target.validMove)
 			{
-				addChar(ev.target.origin.image, ev.target.parent);
-				ev.target.origin.row = ev.target.row;
-				ev.target.origin.col = ev.target.col;
-				ev.target.origin.canMove = false;
+				dude = ev.target.origin;
+				addChar(dude.image, ev.target.parent);
+				dude.row = ev.target.row;
+				dude.col = ev.target.col;
+				dude.canMove = false;
 				createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
 			}
 			else if (ev.target.validAttack)
@@ -29,10 +78,19 @@ bl.onGridClick = function(ev)
 			bl.updateDudes();
 			if (bl.hasActiveChar(ev.target))
 			{
-				if (bl.getChar(ev.target).dude.canMove)
-					setHighlights(bl.dude_move_radius(bl.getChar(ev.target).dude), 'move', bl.getChar(ev.target).dude);
-				if (bl.getChar(ev.target).dude.canAttack)
-					setHighlights(bl.dude_fight_radius(bl.getChar(ev.target).dude), 'target', bl.getChar(ev.target).dude);
+				dude = bl.getChar(ev.target).dude;
+				if (dude.canMove)
+				{
+					coords = bl.dude_move_radius(dude);
+					squares = bl.validMoves(dude, coords);
+					setHighlights(squares, 'move', dude);
+				}
+				if (dude.canAttack)
+				{
+					coords = bl.dude_attack_radius(dude);
+					squares = bl.validAttacks(dude, coords);
+					setHighlights(squares, 'target', dude);
+				}
 				bl.GameStatus = 'CharSelected';
 			}
 			else

@@ -182,28 +182,22 @@ function clearAll()
 	}
 }
 
-function setHighlights(rad, type, origin)
+function setHighlights(squares, type, origin)
 {
-	for (var key in rad)
+	for (var i in squares)
 	{
-		var square = window.maze.board[rad[key].y][rad[key].x].getChildByName('basegrid');
+		var square = squares[i];
 		switch (type)
 		{
 			case 'move':
-				if (!bl.getChar(square))
-				{
-					square.validMove = true;
-					square.origin = origin;
-					square.parent.getChildByName(type + 'grid').alpha = 0.25;
-				}
+				square.validMove = true;
+				square.origin = origin;
+				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;
 			case 'target':
-				if (bl.hasEnemyChar(square))
-				{
-					square.validAttack = true;
-					square.origin = origin;
-					square.parent.getChildByName(type + 'grid').alpha = 0.25;
-				}
+				square.validAttack = true;
+				square.origin = origin;
+				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;
 		}
 	}
