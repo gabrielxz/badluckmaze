@@ -53,6 +53,13 @@ bl.onGridClick = function(ev)
 {
 	var dude, coords, squares;
 
+	dude = bl.getChar(ev.target).dude;
+	if(dude != null)
+	{
+		// set top left text objects with dude info
+		console.log("health: "+dude.health);
+	}
+
 	switch(bl.GameStatus)
 	{
 		case 'CharSelected':
