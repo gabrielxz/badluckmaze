@@ -17,6 +17,19 @@
   </head>
   <body onload="init()">
 <button onclick="bl.endTurn();">End Turn</button>  
+<script>
+ 
+            window.keypress(function (e) {
+                //alert("You pressed: " + e.keyCode);
+                if ((e.which == 13) || (e.keyCode == 13)) {
+                    alert("You pressed enter");
+                    //alert(document.getElementById('submitLogin').className);
+                    //$("#submitButton").click();
+                    bl.endTurn();
+                }
+            });
+
+</script>
 <canvas id="myCanvas" width="1660" height="1000"
 style="border:1px solid #000000;">
 </canvas>
