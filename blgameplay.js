@@ -18,6 +18,7 @@ bl.onGridClick = function(ev)
 			{
 				//StartCombat()
 				alert('Mortal Kombat!!');
+				ev.target.origin.canMove = false;
 				ev.target.origin.canAttack = false;
 			}
 		case 'CharSelection':
@@ -38,6 +39,14 @@ bl.onGridClick = function(ev)
 			break;
 	}
 	window.maze.stage.update();
+}
+
+bl.endTurn = function()
+{
+	bl.CurrPlayer = (bl.CurrPlayer ? 0 : 1);
+	bl.GameStatus = 'CharSelection';
+	bl.resetDudes();
+	clearAll();
 }
 
 bl.hasActiveChar = function(square)
@@ -77,5 +86,15 @@ bl.updateDudes = function()
 	{
 		var d = dude[x];
 		addChar(d.image,window.maze.board[d.col][d.row]);
+	}
+}
+
+bl.resetDudes = function()
+{
+	for(var x in window.dude)
+	{
+		var d = dude[x];
+		d.canMove = true;
+		d.canAttack = true;
 	}
 }
