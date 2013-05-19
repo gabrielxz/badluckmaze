@@ -1,9 +1,9 @@
-window.blassets['archer_front'] = new createjs.Bitmap('assets/archerfront.png');
-window.blassets['archer_back']  = new createjs.Bitmap('assets/archerback.png');
-window.blassets['archer_big']   = new createjs.Bitmap('assets/archerbig.png');
-window.blassets['knight_front'] = new createjs.Bitmap('assets/knightfront.png');
-window.blassets['knight_back']  = new createjs.Bitmap('assets/knightback.png');
-window.blassets['knight_big']   = new createjs.Bitmap('assets/knightbig.png');
+window.blassets['archer_front']  = new createjs.Bitmap('assets/archerfront.png');
+window.blassets['archer_back']   = new createjs.Bitmap('assets/archerback.png');
+window.blassets['archer_big']    = new createjs.Bitmap('assets/archerbig.png');
+window.blassets['knight_front']  = new createjs.Bitmap('assets/knightfront.png');
+window.blassets['knight_back']   = new createjs.Bitmap('assets/knightback.png');
+window.blassets['knight_big']    = new createjs.Bitmap('assets/knightbig.png');
 window.blassets['warrior_front'] = new createjs.Bitmap('assets/warriorfront.png');
 window.blassets['warrior_back']  = new createjs.Bitmap('assets/warriorback.png');
 window.blassets['warrior_big']   = new createjs.Bitmap('assets/warriorbig.png');
@@ -26,15 +26,15 @@ bl.dude_init = function()
 }
 
 bl.dude = function(player, row, col) {
-	this.owner  = player;
-	this.row    = row;
-	this.col    = col;
-	this.type   = 'none';
-	this.speed  = 999;
-	this.range  = 999;
-	this.power  = 999;
-	this.health = 999;
-	this.image  = null;
+	this.owner    = player;
+	this.row      = row;
+	this.col      = col;
+	this.type     = 'none';
+	this.speed    = 999;
+	this.range    = 999;
+	this.power    = 999;
+	this.health   = 999;
+	this.image    = null;
 	this.bigImage = null;
 	this.canAttack = true;
 	this.canMove = true;
@@ -133,6 +133,17 @@ bl.dude_fight_radius = function(dude) {
 		}
 	}
 	return radius;
+}
+
+bl.dudes_alive = function(player) {
+	var d, count = 0;
+	for (var i = 0; i < window.dude.length(); i++) {
+		d = window.dude[i];
+		if (d.owner == player && d.health > 0) {
+			count++;
+		}
+	}
+	return count;
 }
 
 bl.dude_init();
