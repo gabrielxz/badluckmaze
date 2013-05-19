@@ -65,7 +65,7 @@ bl.totem_hit = function(dude, totem) {
 		bl.dice_gain_pip(newOwner);
 	}
 	for(var i = 0; i < totem.bl; i++) {
-		bl.dice_lose_pip(totem.owner);
+		bl.dice_lose_pip(bl.otherPlayer(newOwner));
 	}
 
 	if (dude)
