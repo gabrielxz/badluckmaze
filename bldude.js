@@ -135,6 +135,10 @@ bl.dude_fight_radius = function(dude) {
 	return radius;
 }
 
+bl.dude_kill = function(dude) {
+	dude.health = 0;
+}
+
 bl.dudes_alive = function(player) {
 	var d, count = 0;
 	for (var i = 0; i < window.dude.length(); i++) {

@@ -51,11 +51,13 @@ bl.validAttacks = function(dude, coords)
 
 bl.onGridClick = function(ev)
 {
-	var dude, coords, squares;
+	var ch, dude, coords, squares;
 
-	dude = bl.getChar(ev.target).dude;
-	if(dude != null)
+	ch = bl.getChar(ev.target);
+	if(ch != null)
 	{
+		dude = ch.dude;
+
 		// set top left text objects with dude info
 		console.log("health: "+dude.health);
 	}

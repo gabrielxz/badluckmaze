@@ -21,8 +21,8 @@ bl.fight = function(attacker, defender) {
 	}
 
 	defender.health -= damage;
-	if (defender.health < 0) {
-		defender.health = 0;
+	if (defender.health <= 0) {
+		bl.dude_kill(defender);
 	}
 
 	window.fight.offense = offense;

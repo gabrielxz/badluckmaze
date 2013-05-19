@@ -11,11 +11,14 @@ bl.totem = function(row, col, bl, gl) {
 	this.col   = col;
 	this.bl    = bl;
 	this.gl    = gl;
+
 	if(row == 6 && col == 6) {
+		this.center = true;
 		this.image_dark = window.blassets['center_dark'].clone();
 		this.image_red  = window.blassets['center_red'].clone();
 		this.image_blue = window.blassets['center_blue'].clone();
 	} else {
+		this.center = false;
 		this.image_dark = window.blassets['totem_dark'].clone();
 		this.image_red  = window.blassets['totem_red'].clone();
 		this.image_blue = window.blassets['totem_blue'].clone();
@@ -35,17 +38,11 @@ bl.totem_init = function() {
 }
 
 bl.totem_hit = function(dude, totem) {
-	var newOwner, oldOwner;
-	
-	if (dude)
-	{
-		newOwner = dude.owner;
-	}
-	else
-	{
-		newOwner = bl.otherPlayer(totem.owner);
-	}
+	var newOwner = dude.owner;
 
+	if(toten.center) {
+		console.log("Center owner: "+totem.owner);
+	}
 	if(newOwner == totem.owner) {
 		return;
 	}
@@ -68,26 +65,19 @@ bl.totem_hit = function(dude, totem) {
 		bl.dice_lose_pip(bl.otherPlayer(newOwner));
 	}
 
-	if (dude)
-	{
-		totem.owner = newOwner;
-	}
-	else
-	{
-		totem.owner = null;
-	}
+	totem.owner = newOwner;
 	
-	if(totem.owner == 0)
-	{
+	if(totem.owner == 0) {
 		totem.image = totem.image_red;
-	}
-	else if (totem.owner == 1)
-	{
+	} else if (totem.owner == 1) {
 		totem.image = totem.image_blue;
-	}
-	else
-	{
+	} else {
 		totem.image = totem.image_dark;
+	}
+
+	if(totem.center) {
+		console.log("Kill");
+		bl.dude_kill(dude);
 	}
 }
 
@@ -95,7 +85,7 @@ bl.addTotems = function()
 {
 	for (var x in window.totem)
 	{
-		bl.addTotem(totem[x].image,window.maze.board[totem[x].row][totem[x].col], window.totem[x].gl);
+		bl.addTotem(totem[x].image,window.maze.board[totem[x].row][totem[x].col], window.totem[x].center);
 	}
 }
 
@@ -103,14 +93,15 @@ bl.updateTotems = function()
 {
 	for (var x in window.totem)
 	{
-		var square = window.maze.board[totem[x].row][totem[x].col];
-		if (bl.hasActiveChar()  || 
-		    (window.totem[x].gl > 0 && window.totem[x].owner != null))
+		console.log("Totem: "+window.totem[x].row+", "+window.totem[x].col);
+		var square = window.maze.board[window.totem[x].row][window.totem[x].col];
+		if (bl.hasActiveChar(square))
 		{
+			console.log("Hit");
 			square.misc.removeAllChildren();
 			var ch = bl.getChar(square);
-			bl.totem_hit((ch ? ch.dude : null), window.totem[x]);
-			bl.addTotem(window.totem[x].image, square, window.totem[x].gl);
+			bl.totem_hit(ch.dude, window.totem[x]);
+			bl.addTotem(window.totem[x].image, square, window.totem[x].center);
 		}
 	}
 }
