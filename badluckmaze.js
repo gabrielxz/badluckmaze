@@ -86,7 +86,7 @@ function init() {
 			square.hitArea = hitarea;
 			square.row = j;
 			square.col = i;
-			square.alpha = 0;
+			square.alpha = 1;
 			
 			square.name = 'basegrid';
 			square.addEventListener('click', bl.onGridClick);
@@ -133,6 +133,14 @@ function init() {
 			square.x = window.maze.SQWIDTH/2+1;
 			square.y = Math.floor(window.maze.SQHEIGHT * 0.75);
 
+			square.name = 'misc';
+			grid.addChild(square);
+
+			square = new createjs.Container();
+
+			square.x = window.maze.SQWIDTH/2+1;
+			square.y = Math.floor(window.maze.SQHEIGHT * 0.75);
+
 			square.name = 'char';
 			grid.addChild(square);
 
@@ -140,6 +148,7 @@ function init() {
 		}
 	}
 	bl.updateDudes();
+	bl.addTotems();
 	stage.update();
 }
 
