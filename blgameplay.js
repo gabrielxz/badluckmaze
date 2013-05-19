@@ -46,7 +46,7 @@ bl.validAttacks = function(dude, coords)
 		}
 	}
 
-	if (valid.length <= 0)
+	if (valid.length <= 0 && !dude.canMove)
 	{
 		dude.canAttack = false;
 	}
@@ -179,3 +179,15 @@ bl.checkForWin = function()
 	return (bl.dudes_alive(bl.otherPlayer()) <= 0);
 }
 
+bl.turnFinished = function()
+{
+	for(var x in window.dude)
+	{
+		var d = dude[x];
+		if(d.canMove || d.canAttack)
+		{
+			return false;
+		}
+	}
+	return true;
+}
