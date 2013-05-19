@@ -121,9 +121,9 @@ bl.endTurn = function()
 {
 	bl.CurrPlayer = bl.otherPlayer();
 	bl.GameStatus = 'CharSelection';
+	bl.updateTotems();
 	bl.resetDudes();
 	clearAll();
-	bl.updateTotems();
 }
 
 bl.hasActiveChar = function(square)
@@ -162,7 +162,9 @@ bl.updateDudes = function()
 	for(var x in window.dude)
 	{
 		var d = dude[x];
-		addChar(d.image,window.maze.board[d.col][d.row]);
+		if(d.health > 0) {
+			addChar(d.image,window.maze.board[d.col][d.row]);
+		}
 	}
 }
 

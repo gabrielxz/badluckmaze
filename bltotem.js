@@ -40,7 +40,7 @@ bl.totem_init = function() {
 bl.totem_hit = function(dude, totem) {
 	var newOwner = dude.owner;
 
-	if(toten.center) {
+	if(totem.center) {
 		console.log("Center owner: "+totem.owner);
 	}
 	if(newOwner == totem.owner) {
@@ -91,27 +91,31 @@ bl.addTotems = function()
 
 bl.updateTotems = function()
 {
+	var square, t;
+
 	for (var x in window.totem)
 	{
-		console.log("Totem: "+window.totem[x].row+", "+window.totem[x].col);
-		var square = window.maze.board[window.totem[x].row][window.totem[x].col];
+		t = window.totem[x];
+		square = window.maze.board[t.row][t.col].getChildByName('basegrid');
+
 		if (bl.hasActiveChar(square))
 		{
-			console.log("Hit");
-			square.misc.removeAllChildren();
 			var ch = bl.getChar(square);
-			bl.totem_hit(ch.dude, window.totem[x]);
-			bl.addTotem(window.totem[x].image, square, window.totem[x].center);
+			square = window.maze.board[t.row][t.col];
+			console.log(square);
+			//square.getChildByName('misc').removeAllChildren();
+			bl.totem_hit(ch.dude, t);
+			//bl.addTotem(t.image, square, t.center);
 		}
 	}
 }
 
-bl.addTotem = function(ca, square, isCenter)
+bl.addTotem = function(img, square, isCenter)
 {
 	var misc = square.getChildByName('misc');
-	ca.x = 0 - Math.floor(ca.image.width/2);
-	ca.y = (isCenter ? 25 : 10) - ca.image.height;
-	misc.addChild(ca);
+	img.x = 0 - Math.floor(img.image.width/2);
+	img.y = (isCenter ? 25 : 10) - img.image.height;
+	misc.addChild(img);
 	return true;
 }
 
