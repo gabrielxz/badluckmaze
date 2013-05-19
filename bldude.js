@@ -13,14 +13,14 @@ bl.dude_init = function()
 	// Player 0
 	window.dude.push( bl.archer(0, 0, 1));
 	window.dude.push(bl.warrior(0, 0, 5));
-	window.dude.push( bl.knight(0, 5, 6));
+	window.dude.push( bl.knight(0, 5, 3));
 	window.dude.push(bl.warrior(0, 0, 7));
 	window.dude.push( bl.archer(0, 0, 11));
 
 	// Player 1
 	window.dude.push( bl.archer(1, 12, 1));
 	window.dude.push(bl.warrior(1, 12, 5));
-	window.dude.push( bl.knight(1, 6, 6));
+	window.dude.push( bl.knight(1, 6, 3));
 	window.dude.push(bl.warrior(1, 12, 7));
 	window.dude.push( bl.archer(1, 12, 11));
 }

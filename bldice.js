@@ -120,6 +120,11 @@ bl.dice_gain_pip = function(player) {
 		removed[r] = i;
 	}
 
+	// Fixme
+	if(removed.length = 0) {
+		return;
+	}
+
 	r = bl.dice_rand(r);
 	i = removed[r];
 	window.dice.missing[i]--;

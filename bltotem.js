@@ -1,6 +1,6 @@
 window.blassets['totem_dark'] = new createjs.Bitmap('assets/totem.png');
-window.blassets['totem_red'] = new createjs.Bitmap('assets/totemred.png');
-window.blassets['totem_blue'] = new createjs.Bitmap('assets/totemblue.png');
+window.blassets['totem_red'] = new createjs.Bitmap('assets/totemRed.png');
+window.blassets['totem_blue'] = new createjs.Bitmap('assets/totemBlue.png');
 window.blassets['center_dark'] = new createjs.Bitmap('assets/centerPic.png');
 window.blassets['center_red'] = new createjs.Bitmap('assets/centerred.png');
 window.blassets['center_blue'] = new createjs.Bitmap('assets/centerblue.png');
@@ -41,8 +41,10 @@ bl.totem_hit = function(dude, totem) {
 	var newOwner = dude.owner;
 
 	if(totem.center) {
-		console.log("Center owner: "+totem.owner);
+		console.log("Kill");
+		bl.dude_kill(dude);
 	}
+
 	if(newOwner == totem.owner) {
 		return;
 	}
@@ -74,11 +76,6 @@ bl.totem_hit = function(dude, totem) {
 	} else {
 		totem.image = totem.image_dark;
 	}
-
-	if(totem.center) {
-		console.log("Kill");
-		bl.dude_kill(dude);
-	}
 }
 
 bl.addTotems = function()
@@ -102,7 +99,6 @@ bl.updateTotems = function()
 		{
 			var ch = bl.getChar(square);
 			square = window.maze.board[t.row][t.col];
-			console.log(square);
 			bl.totem_hit(ch.dude, t);
 			bl.addTotem(t.image, square, t.center);
 		}
@@ -118,15 +114,6 @@ bl.addTotem = function(img, square, isCenter)
 	misc.addChild(img);
 	window.maze.stage.update();
 	return true;
-}
-
-bl.totem_check = function(dude) {
-	for (var i = 0; i < window.totem.length; i++) {
-		if(dude.row == window.totem[i].row &&
-		   dude.col == window.totem[i].col) {
-			bl.totem_hit(dude, window.totem[i]);
-		}
-	}
 }
 
 bl.totem_init();

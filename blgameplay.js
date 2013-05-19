@@ -121,9 +121,10 @@ bl.endTurn = function()
 {
 	bl.CurrPlayer = bl.otherPlayer();
 	bl.GameStatus = 'CharSelection';
-	bl.updateTotems();
 	bl.resetDudes();
 	clearAll();
+	bl.updateDudes();
+	bl.updateTotems();
 }
 
 bl.hasActiveChar = function(square)
@@ -166,6 +167,7 @@ bl.updateDudes = function()
 			addChar(d.image,window.maze.board[d.col][d.row]);
 		}
 	}
+	window.maze.stage.update();
 }
 
 bl.resetDudes = function()
