@@ -52,19 +52,19 @@ bl.totem_hit = function(dude, totem) {
 	// Return pips
 	if(totem.owner != null) {
 		for(var i = 0; i < totem.bl; i++) {
-			bl.dice_gain_pip(newOwner);
+			dice.gain_pip(newOwner);
 		}
 		for(var i = 0; i < totem.gl; i++) {
-			bl.dice_lose_pip(totem.owner);
+			dice.lose_pip(totem.owner);
 		}
 	}
 
 	// Take pips
 	for(var i = 0; i < totem.gl; i++) {
-		bl.dice_gain_pip(newOwner);
+		dice.gain_pip(newOwner);
 	}
 	for(var i = 0; i < totem.bl; i++) {
-		bl.dice_lose_pip(bl.otherPlayer(newOwner));
+		dice.lose_pip(bl.otherPlayer(newOwner));
 	}
 
 	totem.owner = newOwner;

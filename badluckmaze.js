@@ -185,7 +185,8 @@ function init() {
 	square.alpha = 1;
 	grid.addChild(square);
 
-	setFightDice(window.blassets['die_1'].clone(),window.blassets['die_1'].clone(),window.blassets['die_1'].clone(),window.blassets['die_1'].clone());	
+	setFightDice(dice.get_result_img(0, 0), dice.get_result_img(0, 1), 
+	             dice.get_result_img(1, 0), dice.get_result_img(1, 1));
 
 	square = new createjs.Text('VS.', '50pt sans-serif', 'white');
 	square.x = 435;

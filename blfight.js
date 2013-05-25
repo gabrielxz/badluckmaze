@@ -9,11 +9,11 @@ bl.fight_init = function() {
 bl.fight = function(attacker, defender) {
 	var offense, defense, damage;
 
-	offense = bl.dice_roll(attacker.owner, 0);
-	offense += bl.dice_roll(attacker.owner, 1);
+	dice.roll_dice(attacker.owner);
+	offense = dice.get_result_val(attacker.owner);
 
-	defense = bl.dice_roll(defender.owner, 0);
-	defense += bl.dice_roll(defender.owner, 1);
+	dice.roll_dice(defender.owner);
+	defense = dice.get_result_val(defender.owner);
 
 	damage = offense + attacker.power - defense;
 	if (damage < 0) {
@@ -105,7 +105,8 @@ bl.onFightClick = function(ev)
 			fs.getChildByName('button').text = 'Close';
 			bl.fight(fs.attacker,fs.defender);
 			fs.getChildByName('damageDealt').text = window.fight.damage + ' Damage!';
-			setFightDice(window.dice.results[0].image,window.dice.results[1].image,window.dice.results[2].image,window.dice.results[3].image);
+			setFightDice(dice.get_result_img(0, 0), dice.get_result_img(0, 1), 
+			             dice.get_result_img(1, 0), dice.get_result_img(1, 1));
 			fs.getChildByName('p1hp').text = p2.health + ' HP';
 			fs.getChildByName('p2hp').text = p1.health + ' HP';
 

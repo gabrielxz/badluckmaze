@@ -1,145 +1,185 @@
-window.blassets['die_0']   = new createjs.Bitmap('assets/dice/die_0.png');
-window.blassets['die_1']   = new createjs.Bitmap('assets/dice/die_1.png');
-window.blassets['die_2']   = new createjs.Bitmap('assets/dice/die_2.png');
-window.blassets['die_2-1'] = new createjs.Bitmap('assets/dice/die_2-1.png');
-window.blassets['die_3']   = new createjs.Bitmap('assets/dice/die_3.png');
-window.blassets['die_3-1'] = new createjs.Bitmap('assets/dice/die_3-1.png');
-window.blassets['die_3-2'] = new createjs.Bitmap('assets/dice/die_3-2.png');
-window.blassets['die_4']   = new createjs.Bitmap('assets/dice/die_4.png');
-window.blassets['die_4-1'] = new createjs.Bitmap('assets/dice/die_4-1.png');
-window.blassets['die_4-2'] = new createjs.Bitmap('assets/dice/die_4-2.png');
-window.blassets['die_4-3'] = new createjs.Bitmap('assets/dice/die_4-3.png');
-window.blassets['die_5']   = new createjs.Bitmap('assets/dice/die_5.png');
-window.blassets['die_5-1'] = new createjs.Bitmap('assets/dice/die_5-1.png');
-window.blassets['die_5-2'] = new createjs.Bitmap('assets/dice/die_5-2.png');
-window.blassets['die_5-3'] = new createjs.Bitmap('assets/dice/die_5-3.png');
-window.blassets['die_5-4'] = new createjs.Bitmap('assets/dice/die_5-4.png');
-window.blassets['die_6']   = new createjs.Bitmap('assets/dice/die_6.png');
-window.blassets['die_6-1'] = new createjs.Bitmap('assets/dice/die_6-1.png');
-window.blassets['die_6-2'] = new createjs.Bitmap('assets/dice/die_6-2.png');
-window.blassets['die_6-3'] = new createjs.Bitmap('assets/dice/die_6-3.png');
-window.blassets['die_6-4'] = new createjs.Bitmap('assets/dice/die_6-4.png');
-window.blassets['die_6-5'] = new createjs.Bitmap('assets/dice/die_6-5.png');
+NUM_PLAYERS = 2;
+NUM_DICE_PER_PLAYER = 2;
+NUM_SIDES_PER_DIE = 6;
 
-bl.dice_result = function() {
-	this.imgarr = new Array();
-	this.imgarr[0] = new Array();
-	this.imgarr[0][0] = window.blassets['die_1'].clone();
-	this.imgarr[0][1] = window.blassets['die_0'].clone();
-	this.imgarr[1] = new Array();
-	this.imgarr[1][0] = window.blassets['die_2'].clone();
-	this.imgarr[1][1] = window.blassets['die_2-1'].clone();
-	this.imgarr[1][2] = this.imgarr[0][1];
-	this.imgarr[2] = new Array();
-	this.imgarr[2][0] = window.blassets['die_3'].clone();
-	this.imgarr[2][1] = window.blassets['die_3-1'].clone();
-	this.imgarr[2][2] = window.blassets['die_3-2'].clone();
-	this.imgarr[2][3] = this.imgarr[0][1];
-	this.imgarr[3] = new Array();
-	this.imgarr[3][0] = window.blassets['die_4'].clone();
-	this.imgarr[3][1] = window.blassets['die_4-1'].clone();
-	this.imgarr[3][2] = window.blassets['die_4-2'].clone();
-	this.imgarr[3][3] = window.blassets['die_4-3'].clone();
-	this.imgarr[3][4] = this.imgarr[0][1];
-	this.imgarr[4] = new Array();
-	this.imgarr[4][0] = window.blassets['die_5'].clone();
-	this.imgarr[4][1] = window.blassets['die_5-1'].clone();
-	this.imgarr[4][2] = window.blassets['die_5-2'].clone();
-	this.imgarr[4][3] = window.blassets['die_5-3'].clone();
-	this.imgarr[4][4] = window.blassets['die_5-4'].clone();
-	this.imgarr[4][5] = this.imgarr[0][1];
-	this.imgarr[5] = new Array();
-	this.imgarr[5][0] = window.blassets['die_6'].clone();
-	this.imgarr[5][1] = window.blassets['die_6-1'].clone();
-	this.imgarr[5][2] = window.blassets['die_6-2'].clone();
-	this.imgarr[5][3] = window.blassets['die_6-3'].clone();
-	this.imgarr[5][4] = window.blassets['die_6-4'].clone();
-	this.imgarr[5][5] = window.blassets['die_6-5'].clone();
-	this.imgarr[5][6] = this.imgarr[0][1];
-	this.image = this.imgarr[0][0];
-}
+dice = new Object();
+dicePriv = new Object();
 
-bl.dice_init = function() {
-	window.dice = new Object();
-	window.dice.missing = new Array();
-	window.dice.results = new Array(); 
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- PUBLIC MUTATORS -- //////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
 
-	for (var i = 0; i < 24; i++) {
-		window.dice.missing.push(0);
-	}
+dice.lose_pip = function(player) {
+	var r, dieObj, sideObj;
 
-	for (var i = 0; i < 4; i++) {
-		window.dice.results.push(new bl.dice_result());
-	}
-}
-
-bl.dice_rand = function(max) {
-	return Math.floor(Math.random() * max);
-}
-
-bl.dice_i_to_p = function(i) {
-	return Math.floor(i/12);
-}
-
-bl.dice_i_to_missing = function(i) {
-	return window.dice.missing[i];
-}
-
-bl.dice_i_to_base_val = function(i) {
-	return (i % 6) + 1;
-}
-
-bl.dice_i_to_curr_val = function(i) {
-	return bl.dice_i_to_base_val(i) - bl.dice_i_to_missing();
-}
-
-bl.dice_pds_to_i = function(player, die, side) {
-	return (player * 12) + (die * 6) + side;
-}
-
-bl.dice_ps_to_i = function(player, side) {
-	return (player * 12) + side;
-}
-
-bl.dice_lose_pip = function(player) {
-	var i, side;
-	do {
-		side = bl.dice_rand(12);
-		i = bl.dice_ps_to_i(player, side);
-	} while(bl.dice_i_to_curr_val(i) == 0);
-
-	window.dice.missing[i]++;
-}
-
-bl.dice_gain_pip = function(player) {
-	var i;
-	var r = 0;
-	var removed = new Array();
-
-	for(i = 0; i < 24; i++) {
-		removed[r] = i;
-	}
-
-	// Fixme
-	if(removed.length = 0) {
+	// Handle overflow pips
+	if(dicePriv.extra_pips[player] > 0) {
+		dicePriv.extra_pips[player]--;
 		return;
 	}
 
-	r = bl.dice_rand(r);
-	i = removed[r];
-	window.dice.missing[i]--;
+	do {
+		r = dicePriv.rand(NUM_DICE_PER_PLAYER);
+		dieObj = dicePriv.dice[player][d];
+		r = dicePriv.rand(NUM_SIDES_PER_DIE);
+		sideObj = die.sides[s];
+	} while(sideObj.base_val - side.missing <= 0)
+
+	sideObj.missing++;
+	dicePriv.update_side(sideObj);
+	dicePriv.removed[player].push(side);
 }
 
-bl.dice_roll = function(player, die) {
-	var i, ri, base, missing;
+dice.gain_pip = function(player) {
+	var sideObj;
 
-	ri = (player * 2) + die;
-	i = bl.dice_pds_to_i(player, 0, bl.dice_rand(6));
-	base = bl.dice_i_to_base_val(i);
-	missing = bl.dice_i_to_missing(i);
-	img = window.dice.results[ri].imgarr[base-1][missing];
-	window.dice.results[ri].image = img;
-	return base - missing;
+	// Handle overflow pips
+	if(dicePriv.removed[player].length <= 0) {
+		dicePriv.extra_pips[player]++;
+	}
+
+	sideObj = dicePriv.removed[player].shift();
+	sideObj.missing--;
+	dicePriv.update_side(sideObj);
 }
 
-bl.dice_init();
+dice.roll_die = function(player, die) {
+	var r, dieObj, sideObj;
+
+	r = dicePriv.rand(NUM_SIDES_PER_DIE)
+	dieObj = dicePriv.dice[player][die];
+	sideObj = dieObj.sides[r];
+
+	dieObj.result = sideObj;
+}
+
+dice.roll_dice = function(player) {
+	for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+		dice.roll_die(player, d);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+dice.get_side_img = function(player, die, side) {
+	return dicePriv.dice[player][die].sides[side].image_p;
+}
+
+dice.get_result_img = function(player, die) {
+	return dicePriv.dice[player][die].result.image_r;
+}
+
+dice.get_result_val = function(player) {
+	var sideObj, sum = 0;
+
+	for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+		sideObj = dicePriv.dice[player][d].result;
+		sum += sideObj.base_val - sideObj.missing;
+	}
+
+	return sum;
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+dicePriv.createSide = function(side) {
+	this.base_val = side + 1;
+	this.missing = 0;
+
+	// Clone image for each number of missing pips
+	// One for player die, one for result die
+	this.images_p = new Array();
+	this.images_r = new Array();
+	for(var m = 0; m <= side; m++) {
+		this.images_p.push(blassets['dice_p'][side][m].clone());
+		this.images_r.push(blassets['dice_r'][side][m].clone());
+	}
+
+	dicePriv.update_side(this);
+}
+
+dicePriv.createDie = function() {
+	// Create array of sides 0-5
+	this.sides = new Array();
+	for (var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		this.sides.push(new dicePriv.createSide(s));
+	}
+	
+	// Keep last roll result - Init to 1
+	this.result = this.sides[0];
+}
+
+dicePriv.createImg = function(base, missing) {
+	var name = 'assets/dice/die_';
+	if(base - missing <= 0) {
+		name += '0';
+	} else {
+		name += base;
+		if(missing > 0) {
+			name += '-' + missing;
+		}
+	}
+	name += '.png';
+	return new createjs.Bitmap(name)
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+dicePriv.update_side = function(sideObj) {
+	sideObj.image_p = sideObj.images_p[sideObj.missing];
+	sideObj.image_r = sideObj.images_r[sideObj.missing];
+}
+
+dicePriv.rand = function(max) {
+	return Math.floor(Math.random() * max);
+}
+
+dicePriv.init = function() {
+	// Create 2D array of player dice images [side][missing_pips]
+	blassets['dice_p'] = new Array();
+	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		blassets['dice_p'].push(new Array());
+		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
+			blassets['dice_p'][s].push(dicePriv.createImg(s+1, m));
+		}
+	}
+
+	// Create 2D array of results images [side][missing_pips]
+	// Note: Same as player dice for now - could be different
+	blassets['dice_r'] = new Array();
+	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		blassets['dice_r'].push(new Array());
+		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
+			blassets['dice_r'][s].push(dicePriv.createImg(s+1, m));
+		}
+	}
+
+	// Create 2D array of dice objects [player][die]
+	dicePriv.dice = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.dice.push(new Array());
+		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+			dicePriv.dice[p].push(new dicePriv.createDie());
+		}
+	}
+
+	// Create list of removals (die side ptrs) for each player
+	dicePriv.removed = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.removed.push(new Array());
+	}
+
+	// Store a counter of overflow pips for each player
+	dicePriv.extra_pips = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.extra_pips.push(0);
+	}
+}
+
+dicePriv.init();
