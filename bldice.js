@@ -20,14 +20,14 @@ dice.lose_pip = function(player) {
 
 	do {
 		r = dicePriv.rand(NUM_DICE_PER_PLAYER);
-		dieObj = dicePriv.dice[player][d];
+		dieObj = dicePriv.dice[player][r];
 		r = dicePriv.rand(NUM_SIDES_PER_DIE);
-		sideObj = die.sides[s];
-	} while(sideObj.base_val - side.missing <= 0)
+		sideObj = dieObj.sides[r];
+	} while(sideObj.base_val - sideObj.missing <= 0)
 
 	sideObj.missing++;
 	dicePriv.update_side(sideObj);
-	dicePriv.removed[player].push(side);
+	dicePriv.removed[player].push(sideObj);
 }
 
 dice.gain_pip = function(player) {
@@ -36,6 +36,7 @@ dice.gain_pip = function(player) {
 	// Handle overflow pips
 	if(dicePriv.removed[player].length <= 0) {
 		dicePriv.extra_pips[player]++;
+		return;
 	}
 
 	sideObj = dicePriv.removed[player].shift();

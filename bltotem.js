@@ -42,7 +42,7 @@ bl.totem_hit = function(dude, totem) {
 
 	if(totem.center) {
 		console.log("Kill");
-		bl.dude_kill(dude);
+		dudes.kill(dude);
 	}
 
 	if(newOwner == totem.owner) {

@@ -20,10 +20,7 @@ bl.fight = function(attacker, defender) {
 		damage = 0;
 	}
 
-	defender.health -= damage;
-	if (defender.health <= 0) {
-		bl.dude_kill(defender);
-	}
+	dudes.wound(defender, damage);
 
 	window.fight.offense_roll = offense;
 	window.fight.defense_roll = defense;

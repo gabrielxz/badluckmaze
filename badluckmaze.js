@@ -1,6 +1,5 @@
 window.bl = new Object();
 window.blassets = new Object();
-window.dude = new Array();
 
 window.maze = new Object();
 window.maze.SQHEIGHT = 64;
@@ -276,7 +275,8 @@ function init() {
 	square.addEventListener('click', bl.onFightClick);
 	grid.addChild(square);
 
-	bl.updateDudes();
+	dudes.update(0);
+	dudes.update(1);
 	bl.addTotems();
 	stage.update();
 }
@@ -331,25 +331,17 @@ function setHighlights(squares, type, origin)
 		{
 			case 'move':
 				square.origin = origin;
+				square.validMove = true;
 				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;
 			case 'target':
 				square.origin = origin;
+				square.validAttack = true;
 				square.parent.getChildByName(type + 'grid').alpha = 0.25;
 			break;
 		}
 	}
 }
-
-function testRadius(ev)
-{
-	addChar(window.dude[0].image,ev.target.parent);
-	window.dude[0].row = ev.target.row;
-	window.dude[0].col = ev.target.col;
-	setHighlights(bl.dude_move_radius(window.dude[0]), 'move');
-	window.maze.stage.update();
-}
-
 
 function setFightDice(p2d1,p2d2,p1d1,p1d2,firstRun)
 {

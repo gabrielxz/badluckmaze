@@ -1,6 +1,5 @@
 window.bl = new Object();
 window.blassets = new Object();
-window.dude = new Array();
 
 window.maze = new Object();
 window.maze.SQHEIGHT = 74;
@@ -118,7 +117,8 @@ function init() {
 			stage.addChild(grid);
 		}
 	}
-	bl.updateDudes();
+	dudes.update(0);
+	dudes.update(1);
 	stage.update();
 	
 	// begin loading content (only sounds to load)
@@ -176,19 +176,21 @@ function clearAll()
 	}
 }
 
-function setHighlights(rad, type)
+function setHighlights(squares, type)
 {
-	for (var key in rad)
+	for (var key in squares)
 	{
-		window.maze.board[rad[key].y][rad[key].x].getChildByName(type + 'grid').alpha = 0.25;
+		squares[key].parent.getChildByName(type + 'grid').alpha = 0.25;
 	}
 }
 
 function testRadius(ev)
 {
-	addChar(window.dude[0].image,ev.target.parent);
-	window.dude[0].row = ev.target.row;
-	window.dude[0].col = ev.target.col;
-	setHighlights(bl.dude_move_radius(window.dude[0]), 'move');
+	var dude = dudesPriv.dudes[0][0];
+	dudes.move(dude, ev.target.row, ev.target.col);
+	dudes.update(0);
+	dudes.reset(dude);
+	setHighlights(dudes.valid_moves(dude), 'move');
 	window.maze.stage.update();
 }
+

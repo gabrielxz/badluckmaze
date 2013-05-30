@@ -1,57 +1,9 @@
 bl.GameStatus = 'CharSelection';
 bl.CurrPlayer = 0;
 		
-bl.validMoves = function(dude, coords) 
-{
-	var coord, square;
-	var valid = Array();
-
-	for (var i in coords)
-	{
-		coord = coords[i];
-		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
-
-		if (!bl.getChar(square))
-		{
-			square.validMove = true;
-			valid.push(square);
-		}
-	}
-
-	if (valid.length <= 0)
-	{
-		dude.canMove = false;
-	}
-	return valid;
-}
-
-bl.validAttacks = function(dude, coords) 
-{
-	var coord, square;
-	var valid = Array();
-
-	for (var i in coords)
-	{
-		coord = coords[i];
-		square = window.maze.board[coord.y][coord.x].getChildByName('basegrid');
-
-		if (bl.hasEnemyChar(square))
-		{
-			square.validAttack = true;
-			valid.push(square);
-		}
-	}
-
-	if (valid.length <= 0 && !dude.canMove)
-	{
-		dude.canAttack = false;
-	}
-	return valid;
-}
-
 bl.onGridClick = function(ev)
 {
-	var ch, dude, coords, squares;
+	var ch, dude, squares;
 
 	ch = bl.getChar(ev.target);
 	if(ch != null)
@@ -64,45 +16,34 @@ bl.onGridClick = function(ev)
 		console.log("power: "+dude.power);
 		console.log("speed: "+dude.speed);
 		console.log("range: "+dude.range);
-		
 	}
 
 	switch(bl.GameStatus)
 	{
 		case 'CharSelected':
+			dude = ev.target.origin;
 			if (ev.target.validMove)
 			{
-				dude = ev.target.origin;
 				addChar(dude.image, ev.target.parent);
-				dude.row = ev.target.row;
-				dude.col = ev.target.col;
-				dude.canMove = false;
-				createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
+				dudes.move(dude, ev.target.row, ev.target.col);
 			}
 			else if (ev.target.validAttack)
 			{
-				bl.StartFight(ev.target.origin, bl.getChar(ev.target).dude);
-				ev.target.origin.canMove = false;
-				ev.target.origin.canAttack = false;
+				dudes.attack(dude);
+				bl.StartFight(dude, bl.getChar(ev.target).dude);
 			}
 		case 'CharSelection':
 			clearAll();
-			bl.updateDudes();
+			dudes.update(bl.CurrPlayer);
+			dudes.update(bl.otherPlayer());
+			window.maze.stage.update();
 			if (bl.hasActiveChar(ev.target))
 			{
 				dude = bl.getChar(ev.target).dude;
-				if (dude.canMove)
-				{
-					coords = bl.dude_move_radius(dude);
-					squares = bl.validMoves(dude, coords);
-					setHighlights(squares, 'move', dude);
-				}
-				if (dude.canAttack)
-				{
-					coords = bl.dude_fight_radius(dude);
-					squares = bl.validAttacks(dude, coords);
-					setHighlights(squares, 'target', dude);
-				}
+				squares = dudes.valid_moves(dude);
+				setHighlights(squares, 'move', dude);
+				squares = dudes.valid_attacks(dude);
+				setHighlights(squares, 'target', dude);
 				bl.GameStatus = 'CharSelected';
 			}
 			else
@@ -121,12 +62,14 @@ bl.otherPlayer = function()
 
 bl.endTurn = function()
 {
+	dudes.reset_all(bl.CurrPlayer);
 	bl.CurrPlayer = bl.otherPlayer();
 	bl.GameStatus = 'CharSelection';
-	bl.resetDudes();
 	clearAll();
-	bl.updateDudes();
+	dudes.update(bl.CurrPlayer);
+	dudes.update(bl.otherPlayer());
 	bl.updateTotems();
+	window.maze.stage.update();
 }
 
 bl.hasActiveChar = function(square)
@@ -160,33 +103,9 @@ bl.getChar = function(square)
 	return ch;
 }
 
-bl.updateDudes = function()
-{
-	for(var x in window.dude)
-	{
-		var d = dude[x];
-		if(d.health > 0) {
-			addChar(d.image,window.maze.board[d.col][d.row]);
-		}
-	}
-	window.maze.stage.update();
-}
-
-bl.resetDudes = function()
-{
-	for(var x in window.dude)
-	{
-		var d = dude[x];
-		d.canMove = true;
-		d.canAttack = true;
-	}
-}
-
 bl.checkForWin = function()
 {
-	//return (bl.dudes_alive(bl.otherPlayer()) <= 0);
-	
-	if (bl.dudes_alive(bl.otherPlayer()) <= 0)
+	if (dudes.num_alive(bl.otherPlayer()) <= 0)
 	{
 		if (bl.CurrPlayer == 0)
 		{
@@ -202,13 +121,8 @@ bl.checkForWin = function()
 
 bl.turnFinished = function()
 {
-	for(var x in window.dude)
-	{
-		var d = dude[x];
-		if(d.canMove || d.canAttack)
-		{
-			return false;
-		}
+	if(dudes.num_available(bl.CurrPlayer) > 0) {
+		return false;
 	}
 	return true;
 }
