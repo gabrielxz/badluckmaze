@@ -68,7 +68,7 @@ bl.endTurn = function()
 	clearAll();
 	dudes.update(bl.CurrPlayer);
 	dudes.update(bl.otherPlayer());
-	bl.updateTotems();
+	totems.check();
 	window.maze.stage.update();
 }
 

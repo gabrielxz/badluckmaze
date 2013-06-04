@@ -14,6 +14,7 @@ dudesPriv = new Object();
 dudes.move = function(dudeObj, row, col) {
 	dudeObj.row = row;
 	dudeObj.col = col;
+	dudeObj.square = maze.board[col][row];
 	dudeObj.canMove = false;
 	createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
 }
@@ -25,7 +26,7 @@ dudes.attack = function(dudeObj) {
 
 dudes.kill = function(dudeObj) {
 	dudeObj.health = 0;
-	maze.board[dudeObj.col][dudeObj.row].getChildByName('char').removeAllChildren();
+	dudeObj.square.getChildByName('char').removeAllChildren();
 	maze.stage.update();
 	createjs.Sound.play("deathScream", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.75, 0);
 
@@ -46,7 +47,7 @@ dudes.update = function(player)
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
 		if(dudeObj.health > 0) {
-			addChar(dudeObj.image, window.maze.board[dudeObj.col][dudeObj.row]);
+			addChar(dudeObj.image, dudeObj.square);
 		}
 	}
 }
@@ -135,6 +136,7 @@ dudesPriv.createDude = function(owner, row, col, type) {
 	this.range     = dudesPriv.range[type];
 	this.power     = dudesPriv.power[type];
 	this.health    = dudesPriv.health[type];
+	this.square    = maze.board[col][row];
 	this.image     = blassets[type][owner].clone();
 	this.bigImage  = blassets[type]['Portrait'].clone();
 
@@ -146,18 +148,18 @@ dudesPriv.createDude = function(owner, row, col, type) {
 ////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-dudesPriv.valid_squares = function(dude, radius, filter) {
+dudesPriv.valid_squares = function(dudeObj, radius, filter) {
 	var square, squares = new Array();
 
-	rMin = Math.max(dude.row - radius, 0);
-	rMax = Math.min(dude.row + radius, BOARD_ROWS-1);
-	cMin = Math.max(dude.col - radius, 0);
-	cMax = Math.min(dude.col + radius, BOARD_COLS-1);
+	rMin = Math.max(dudeObj.row - radius, 0);
+	rMax = Math.min(dudeObj.row + radius, BOARD_ROWS-1);
+	cMin = Math.max(dudeObj.col - radius, 0);
+	cMax = Math.min(dudeObj.col + radius, BOARD_COLS-1);
 
 	for (r = rMin; r <= rMax; r++) {
-		rowDelta = Math.abs(r - dude.row);
+		rowDelta = Math.abs(r - dudeObj.row);
 		for (c = cMin; c <= cMax; c++) {
-			colDelta = Math.abs(c - dude.col);
+			colDelta = Math.abs(c - dudeObj.col);
 			square = maze.board[c][r].getChildByName('basegrid');
 			if (rowDelta + colDelta <= radius && filter(square)) {
 				squares.push(square);

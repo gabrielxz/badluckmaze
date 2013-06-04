@@ -8,9 +8,13 @@ window.maze.BOARDSIZE = 13;
 window.maze.VOFFSET = 110;
 window.maze.HOFFSET = 960;
 window.maze.board = new Array();
-for (var i = 0; i < window.maze.BOARDSIZE; i++)
+for (var r = 0; r < window.maze.BOARDSIZE; r++)
 {
-	window.maze.board[i] = new Array();
+	window.maze.board[r] = new Array();
+	for (var c = 0; c < window.maze.BOARDSIZE; c++)
+	{
+		window.maze.board[r][c] = new createjs.Container();
+	}
 }
 
 function toggleGreenHilight(ev)
@@ -65,13 +69,12 @@ function init() {
 		for (var j = 0; j < window.maze.BOARDSIZE; j++)
 		{
 			//grid
-			var grid = new createjs.Container();
+			var grid = window.maze.board[i][j];
 
 			grid.x = window.maze.HOFFSET + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
 			grid.y = window.maze.VOFFSET +(window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
 
 			grid.name = 'grid' + i + 'x' + j;
-			window.maze.board[i][j] = grid;
 			
 			var square = new createjs.Shape();
 			square.graphics.beginStroke('000000').moveTo(window.maze.SQWIDTH/2+1,0);
@@ -146,6 +149,7 @@ function init() {
 			stage.addChild(grid);
 		}
 	}
+
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
@@ -277,7 +281,7 @@ function init() {
 
 	dudes.update(0);
 	dudes.update(1);
-	bl.addTotems();
+	totems.update();
 	stage.update();
 }
 

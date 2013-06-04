@@ -1,119 +1,148 @@
-window.blassets['totem_dark'] = new createjs.Bitmap('assets/totem.png');
-window.blassets['totem_red'] = new createjs.Bitmap('assets/totemRed.png');
-window.blassets['totem_blue'] = new createjs.Bitmap('assets/totemBlue.png');
-window.blassets['center_dark'] = new createjs.Bitmap('assets/centerPic.png');
-window.blassets['center_red'] = new createjs.Bitmap('assets/centerred.png');
-window.blassets['center_blue'] = new createjs.Bitmap('assets/centerblue.png');
+RED_PLAYER  = 0;
+BLUE_PLAYER = 1;
 
-bl.totem = function(row, col, bl, gl) {
-	this.owner = null;
-	this.row   = row;
-	this.col   = col;
-	this.bl    = bl;
-	this.gl    = gl;
+totems = new Object();
+totemsPriv = new Object();
 
-	if(row == 6 && col == 6) {
-		this.center = true;
-		this.image_dark = window.blassets['center_dark'].clone();
-		this.image_red  = window.blassets['center_red'].clone();
-		this.image_blue = window.blassets['center_blue'].clone();
-	} else {
-		this.center = false;
-		this.image_dark = window.blassets['totem_dark'].clone();
-		this.image_red  = window.blassets['totem_red'].clone();
-		this.image_blue = window.blassets['totem_blue'].clone();
-	}
-	this.image = this.image_dark;
-}
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- PUBLIC MUTATORS -- //////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
 
-bl.totem_init = function() {
-	window.totem = new Array();
-	window.totem.push(new bl.totem(4,  2, 2, 0));
-	window.totem.push(new bl.totem(8,  2, 2, 0));
-	window.totem.push(new bl.totem(11, 5, 4, 0));
-	window.totem.push(new bl.totem(1,  7, 4, 0));
-	window.totem.push(new bl.totem(4, 10, 2, 0));
-	window.totem.push(new bl.totem(8, 10, 2, 0));
-	window.totem.push(new bl.totem(6,  6, 4, 4));
-}
-
-bl.totem_hit = function(dude, totem) {
+totems.take = function(totemObj, dude) {
+	var owner = totemObj.owner;
 	var newOwner = dude.owner;
 
-	if(totem.center) {
-		console.log("Kill");
+	// Pit sacrifice
+	if(totemObj.type == "Pit") {
 		dudes.kill(dude);
 	}
 
-	if(newOwner == totem.owner) {
+	if(owner == newOwner) {
 		return;
 	}
 
-	// Return pips
-	if(totem.owner != null) {
-		for(var i = 0; i < totem.bl; i++) {
+	for(var i = 0; i < totemObj.badLuck; i++) {
+		// Give bad luck to other player
+		dice.lose_pip(bl.otherPlayer(newOwner));
+
+		// Also remove bad luck given by previous owner
+		if(owner == bl.otherPlayer(newOwner)) {
 			dice.gain_pip(newOwner);
 		}
-		for(var i = 0; i < totem.gl; i++) {
-			dice.lose_pip(totem.owner);
+	}
+
+	for(var i = 0; i < totemObj.goodLuck; i++) {
+		// Give good luck to owner
+		dice.lose_pip(newOwner);
+
+		// Also remove good luck given to previous owner
+		if(owner == bl.otherPlayer(newOwner)) {
+			dice.gain_pip(newOwner);
 		}
 	}
 
-	// Take pips
-	for(var i = 0; i < totem.gl; i++) {
-		dice.gain_pip(newOwner);
-	}
-	for(var i = 0; i < totem.bl; i++) {
-		dice.lose_pip(bl.otherPlayer(newOwner));
-	}
-
-	totem.owner = newOwner;
-	
-	if(totem.owner == 0) {
-		totem.image = totem.image_red;
-	} else if (totem.owner == 1) {
-		totem.image = totem.image_blue;
-	} else {
-		totem.image = totem.image_dark;
-	}
+	totemObj.image = totemObj.images[newOwner];
+	totemObj.owner = newOwner;
+	totemsPriv.update_image(totemObj);
 }
 
-bl.addTotems = function()
-{
-	for (var x in window.totem)
-	{
-		bl.addTotem(totem[x].image,window.maze.board[totem[x].row][totem[x].col], window.totem[x].center);
-	}
-}
+totems.check = function() {
+	var totemObj, layer;
 
-bl.updateTotems = function()
-{
-	var square, t;
+	for(var i in totemsPriv.totems) {
+		totemObj = totemsPriv.totems[i];
+		layer = totemObj.square.getChildByName('basegrid');
 
-	for (var x in window.totem)
-	{
-		t = window.totem[x];
-		square = window.maze.board[t.row][t.col].getChildByName('basegrid');
-
-		if (bl.hasActiveChar(square))
-		{
-			var ch = bl.getChar(square);
-			square = window.maze.board[t.row][t.col];
-			bl.totem_hit(ch.dude, t);
-			bl.addTotem(t.image, square, t.center);
+		if (bl.hasActiveChar(layer)) {
+			totems.take(totemObj, bl.getChar(layer).dude);
 		}
 	}
+	maze.stage.update();
 }
 
-bl.addTotem = function(img, square, isCenter)
-{
-	var misc = square.getChildByName('misc');
-	misc.removeAllChildren();
+totems.update = function() {
+	var totemObj;
+
+	for(var i in totemsPriv.totems) {
+		totemObj = totemsPriv.totems[i];
+		totemsPriv.update_image(totemObj);
+	}
+	maze.stage.update();
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+totemsPriv.createTotem = function(row, col, type) {
+	this.owner    = null;
+	this.row      = row;
+	this.col      = col;
+	this.type     = type;
+	this.badLuck  = totemsPriv.badLuck[type];
+	this.goodLuck = totemsPriv.goodLuck[type];
+	this.square   = maze.board[col][row];
+
+	this.images = new Array();
+	this.images[RED_PLAYER]  = blassets[type][RED_PLAYER].clone();
+	this.images[BLUE_PLAYER] = blassets[type][BLUE_PLAYER].clone();
+	this.images['Dark']      = blassets[type]['Dark'].clone();
+
+	this.image = this.images['Dark'];
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+totemsPriv.update_image = function(totemObj) {
+	var img, layer;
+
+	img = totemObj.image;
+	layer = totemObj.square.getChildByName('misc');
+
 	img.x = 0 - Math.floor(img.image.width/2);
-	img.y = (isCenter ? 25 : 10) - img.image.height;
-	misc.addChild(img);
-	window.maze.stage.update();
-	return true;
+	img.y = 10 - img.image.height;
+	// FIXME: Change the png files so this is unnecessary
+	if(totemObj.type == 'Pit') {
+		img.y = 25 - img.image.height;
+	}
+
+	layer.removeAllChildren();
+	layer.addChild(totemObj.image);
 }
 
-bl.totem_init();
+totemsPriv.init = function() {
+	blassets['Minor'] = new Array();
+	blassets['Minor'][RED_PLAYER] = new createjs.Bitmap('assets/totemRed.png') ;
+	blassets['Minor'][BLUE_PLAYER] = new createjs.Bitmap('assets/totemBlue.png') ;
+	blassets['Minor']['Dark'] = new createjs.Bitmap('assets/totem.png') ;
+	blassets['Major'] = new Array();
+	blassets['Major'][RED_PLAYER] = new createjs.Bitmap('assets/totemRed.png') ;
+	blassets['Major'][BLUE_PLAYER] = new createjs.Bitmap('assets/totemBlue.png') ;
+	blassets['Major']['Dark'] = new createjs.Bitmap('assets/totem.png') ;
+	blassets['Pit'] = new Array();
+	blassets['Pit'][RED_PLAYER] = new createjs.Bitmap('assets/centerred.png') ;
+	blassets['Pit'][BLUE_PLAYER] = new createjs.Bitmap('assets/centerblue.png') ;
+	blassets['Pit']['Dark'] = new createjs.Bitmap('assets/centerPic.png') ;
+
+	totemsPriv.badLuck = new Array();
+	totemsPriv.badLuck['Minor'] =  2;
+	totemsPriv.badLuck['Major'] =  4;
+	totemsPriv.badLuck['Pit'] =    4;
+	totemsPriv.goodLuck = new Array();
+	totemsPriv.goodLuck['Minor'] = 0;
+	totemsPriv.goodLuck['Major'] = 0;
+	totemsPriv.goodLuck['Pit'] =   4;
+
+	totemsPriv.totems = new Array();
+	totemsPriv.totems.push(new totemsPriv.createTotem(2,  4, 'Minor'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(2,  8, 'Minor'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(10, 4, 'Minor'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(10, 8, 'Minor'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(5, 11, 'Major'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(7,  1, 'Major'));
+	totemsPriv.totems.push(new totemsPriv.createTotem(6,  6, 'Pit'));
+}
+
+totemsPriv.init();
