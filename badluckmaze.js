@@ -7,33 +7,15 @@ window.maze.SQWIDTH = 109;
 window.maze.BOARDSIZE = 13;
 window.maze.VOFFSET = 110;
 window.maze.HOFFSET = 960;
-window.maze.board = new Array();
-for (var r = 0; r < window.maze.BOARDSIZE; r++)
-{
-	window.maze.board[r] = new Array();
-	for (var c = 0; c < window.maze.BOARDSIZE; c++)
-	{
-		window.maze.board[r][c] = new createjs.Container();
-	}
-}
-
-function toggleGreenHilight(ev)
-{
-	var green = ev.target.parent.getChildByName('movegrid');
-	if (green.alpha == 0)
-		green.alpha = 0.5;
-	else
-		green.alpha = 0;
-	window.maze.stage.update();
-}
 
 function init() {
-	window.maze.stage = new createjs.Stage("myCanvas");
-	var stage = window.maze.stage;
+	stage = new createjs.Stage("myCanvas");
 
-	var board = new createjs.Bitmap('assets/board.png');
-	stage.addChild(board);
-	
+	board.init();
+	dudes.init();
+	totems.init();
+	dice.init();
+
 	// begin loading sounds - Gabriel's code
 	var assetsPath = "assets/";
 	manifest = [
@@ -51,105 +33,6 @@ function init() {
 	preload.loadManifest(manifest);
 	// end loading sounds
 	
-	// grid
-	var hitarea = new createjs.Shape();
-	hitarea.graphics.beginFill('000000').moveTo(window.maze.SQWIDTH/2+1,0);
-	hitarea.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
-	hitarea.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
-	hitarea.graphics.lineTo(0,window.maze.SQHEIGHT/2+1);
-	hitarea.graphics.lineTo(window.maze.SQWIDTH/2+1,0).endFill();
-	
-	hitarea.x = 0;
-	hitarea.y = 0;
-	
-	hitarea.name = 'hitarea';
-	
-	for (var i = 0; i < window.maze.BOARDSIZE; i++)
-	{
-		for (var j = 0; j < window.maze.BOARDSIZE; j++)
-		{
-			//grid
-			var grid = window.maze.board[i][j];
-
-			grid.x = window.maze.HOFFSET + (window.maze.SQWIDTH/2+1) * i - (window.maze.SQWIDTH/2+1) * (j + 1);
-			grid.y = window.maze.VOFFSET +(window.maze.SQHEIGHT/2+1) * i + (window.maze.SQHEIGHT/2+1) * j;
-
-			grid.name = 'grid' + i + 'x' + j;
-			
-			var square = new createjs.Shape();
-			square.graphics.beginStroke('000000').moveTo(window.maze.SQWIDTH/2+1,0);
-			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
-			square.graphics.lineTo(0,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,0).endStroke();
-			
-			square.x = 0;
-			square.y = 0;
-			square.hitArea = hitarea;
-			square.row = j;
-			square.col = i;
-			square.alpha = 0;
-			
-			square.name = 'basegrid';
-			square.addEventListener('click', bl.onGridClick);
-			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
-			
-			grid.addChild(square);
-
-			//movement cover
-			square = new createjs.Shape();
-			square.graphics.beginFill('00FF00').moveTo(window.maze.SQWIDTH/2+1,0);
-			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
-			square.graphics.lineTo(0,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,0).endFill();
-			square.alpha = 0;
-			
-			square.x = 0;
-			square.y = 0;
-			
-			square.name = 'movegrid';
-			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
-			
-			grid.addChild(square);
-
-			//target cover
-			square = new createjs.Shape();
-			square.graphics.beginFill('FF0000').moveTo(window.maze.SQWIDTH/2+1,0);
-			square.graphics.lineTo(window.maze.SQWIDTH+1,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,window.maze.SQHEIGHT+1);
-			square.graphics.lineTo(0,window.maze.SQHEIGHT/2+1);
-			square.graphics.lineTo(window.maze.SQWIDTH/2+1,0).endFill();
-			square.alpha = 0;
-			
-			square.x = 0;
-			square.y = 0;
-			
-			square.name = 'targetgrid';
-			square.cache(0,0,window.maze.SQWIDTH+1,window.maze.SQHEIGHT+1);
-			
-			grid.addChild(square);
-			
-			square = new createjs.Container();
-
-			square.x = window.maze.SQWIDTH/2+1;
-			square.y = Math.floor(window.maze.SQHEIGHT * 0.75);
-
-			square.name = 'misc';
-			grid.addChild(square);
-
-			square = new createjs.Container();
-
-			square.x = window.maze.SQWIDTH/2+1;
-			square.y = Math.floor(window.maze.SQHEIGHT * 0.75);
-
-			square.name = 'char';
-			grid.addChild(square);
-
-			stage.addChild(grid);
-		}
-	}
-
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
@@ -279,9 +162,6 @@ function init() {
 	square.addEventListener('click', bl.onFightClick);
 	grid.addChild(square);
 
-	dudes.update(0);
-	dudes.update(1);
-	totems.update();
 	stage.update();
 }
 
@@ -289,62 +169,6 @@ function doneLoading()
 {
 	// start the music
     createjs.Sound.play("mainGameMusic", createjs.Sound.INTERRUPT_NONE, 0, 10000, 0, 0.1, 0);
-}
-
-function addChar(ca,square)
-{
-	var chars = square.getChildByName('char');
-	if (chars.getNumChildren() > 0)
-		return false;
-	ca.x = 0 - Math.floor(ca.image.width/2);
-	ca.y = 0 - ca.image.height;
-	chars.addChild(ca);
-	return true;
-}
-function removeChar(square)
-{
-	var chars = square.getChildByName('char');
-	chars.removeAllChildren();
-	return true;
-}
-
-function clearAll()
-{
-	for (var i = 0; i < window.maze.BOARDSIZE; i++)
-	{
-		for (var j = 0; j < window.maze.BOARDSIZE; j++)
-		{
-			window.maze.board[i][j].getChildByName('movegrid').alpha = 0;
-			window.maze.board[i][j].getChildByName('targetgrid').alpha = 0;
-			window.maze.board[i][j].getChildByName('char').removeAllChildren();
-			window.maze.board[i][j].getChildByName('basegrid').validMove = false;
-			window.maze.board[i][j].getChildByName('basegrid').validAttack = false;
-			window.maze.board[i][j].getChildByName('basegrid').origin = null;
-		}
-	}
-}
-
-function setHighlights(squares, type, origin)
-{
-	var square;
-
-	for (var i in squares)
-	{
-		square = squares[i];
-		switch (type)
-		{
-			case 'move':
-				square.origin = origin;
-				square.validMove = true;
-				square.parent.getChildByName(type + 'grid').alpha = 0.25;
-			break;
-			case 'target':
-				square.origin = origin;
-				square.validAttack = true;
-				square.parent.getChildByName(type + 'grid').alpha = 0.25;
-			break;
-		}
-	}
 }
 
 function setFightDice(p2d1,p2d2,p1d1,p1d2,firstRun)

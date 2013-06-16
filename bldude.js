@@ -12,9 +12,10 @@ dudesPriv = new Object();
 //////////////////////////////////////////////////////////////////////////// 
 
 dudes.move = function(dudeObj, row, col) {
+	board.remove_dude(dudeObj);
 	dudeObj.row = row;
 	dudeObj.col = col;
-	dudeObj.square = maze.board[col][row];
+	board.add_dude(dudeObj);
 	dudeObj.canMove = false;
 	createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
 }
@@ -26,8 +27,8 @@ dudes.attack = function(dudeObj) {
 
 dudes.kill = function(dudeObj) {
 	dudeObj.health = 0;
-	dudeObj.square.getChildByName('char').removeAllChildren();
-	maze.stage.update();
+	board.remove_dude(dudeObj);
+	stage.update();
 	createjs.Sound.play("deathScream", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.75, 0);
 
 	// Does this belong here?
@@ -41,135 +42,17 @@ dudes.wound = function(dudeObj, amount) {
 	}
 }
 
-dudes.update = function(player)
-{
-	var dudeObj;
-	for(var d in dudesPriv.dudes[player]) {
-		dudeObj = dudesPriv.dudes[player][d];
-		if(dudeObj.health > 0) {
-			addChar(dudeObj.image, dudeObj.square);
-		}
-	}
-}
-
-dudes.reset = function(dudeObj)
-{
-	dudeObj.canMove = true;
-	dudeObj.canAttack = true;
-}
-
 dudes.reset_all = function(player)
 {
 	var dudeObj;
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
-		dudes.reset(dudeObj);
+		dudeObj.canMove = true;
+		dudeObj.canAttack = true;
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////// 
-////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
-//////////////////////////////////////////////////////////////////////////// 
-
-dudes.num_alive = function(player) {
-	var dudeObj, count = 0;
-	for(var d in dudesPriv.dudes[player]) {
-		dudeObj = dudesPriv.dudes[player][d];
-		if(dudeObj.health > 0) {
-			count++;
-		}
-	}
-	return count;
-}
-
-dudes.num_available = function(player) {
-	var dudeObj, count = 0;
-	for(var d in dudesPriv.dudes[player]) {
-		dudeObj = dudesPriv.dudes[player][d];
-		if(dudeObj.canMove || dudeObj.canAttack) {
-			count++;
-		}
-	}
-	return count;
-}
-
-dudes.valid_moves = function(dudeObj) {
-	if(!dudeObj.canMove) {
-		return new Array();
-	}
-
-	var filter = function(square){return(!bl.getChar(square));}
-
-	var squares = dudesPriv.valid_squares(dudeObj, dudeObj.speed, filter);
-	if(squares.length <= 0) {
-		dudeObj.canMove = false;
-	}
-	return squares;
-}
-
-dudes.valid_attacks = function(dudeObj) {
-	if(!dudeObj.canAttack) {
-		return new Array();
-	}
-
-	var filter = function(square){return(bl.hasEnemyChar(square));}
-
-	var squares = dudesPriv.valid_squares(dudeObj, dudeObj.range, filter);
-	if(squares.length <= 0 && !dudeObj.canMove) {
-		dudeObj.canAttack = false;
-	}
-	return squares;
-}
-
-//////////////////////////////////////////////////////////////////////////// 
-//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
-//////////////////////////////////////////////////////////////////////////// 
-
-dudesPriv.createDude = function(owner, row, col, type) {
-	this.owner     = owner;
-	this.row       = row;
-	this.col       = col;
-	this.type      = type;
-	this.canAttack = true;
-	this.canMove   = true;
-	this.speed     = dudesPriv.speed[type];
-	this.range     = dudesPriv.range[type];
-	this.power     = dudesPriv.power[type];
-	this.health    = dudesPriv.health[type];
-	this.square    = maze.board[col][row];
-	this.image     = blassets[type][owner].clone();
-	this.bigImage  = blassets[type]['Portrait'].clone();
-
-	// For easy click handling, tie the image back to the dude
-	this.image.dude = this;
-}
-
-//////////////////////////////////////////////////////////////////////////// 
-////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
-//////////////////////////////////////////////////////////////////////////// 
-
-dudesPriv.valid_squares = function(dudeObj, radius, filter) {
-	var square, squares = new Array();
-
-	rMin = Math.max(dudeObj.row - radius, 0);
-	rMax = Math.min(dudeObj.row + radius, BOARD_ROWS-1);
-	cMin = Math.max(dudeObj.col - radius, 0);
-	cMax = Math.min(dudeObj.col + radius, BOARD_COLS-1);
-
-	for (r = rMin; r <= rMax; r++) {
-		rowDelta = Math.abs(r - dudeObj.row);
-		for (c = cMin; c <= cMax; c++) {
-			colDelta = Math.abs(c - dudeObj.col);
-			square = maze.board[c][r].getChildByName('basegrid');
-			if (rowDelta + colDelta <= radius && filter(square)) {
-				squares.push(square);
-			}
-		}
-	}
-	return squares;
-}
-
-dudesPriv.init = function() {
+dudes.init = function() {
 	blassets['Archer'] = new Array();
 	blassets['Archer'][RED_PLAYER] = new createjs.Bitmap('assets/archerfront.png');
 	blassets['Archer'][BLUE_PLAYER] = new createjs.Bitmap('assets/archerback.png');
@@ -218,4 +101,80 @@ dudesPriv.init = function() {
 	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 11, 'Archer'));
 }
 
-dudesPriv.init();
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+dudes.num_alive = function(player) {
+	var dudeObj, count = 0;
+	for(var d in dudesPriv.dudes[player]) {
+		dudeObj = dudesPriv.dudes[player][d];
+		if(dudeObj.health > 0) {
+			count++;
+		}
+	}
+	return count;
+}
+
+dudes.num_available = function(player) {
+	var dudeObj, count = 0;
+	for(var d in dudesPriv.dudes[player]) {
+		dudeObj = dudesPriv.dudes[player][d];
+		if(dudeObj.canMove || dudeObj.canAttack) {
+			count++;
+		}
+	}
+	return count;
+}
+
+dudes.valid_moves = function(dudeObj) {
+	if(!dudeObj.canMove) {
+		return new Array();
+	}
+
+	var filter = function(row, col){return(bl.isValidMove(row, col));}
+
+	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.speed, filter);
+	if(squares.length <= 0) {
+		dudeObj.canMove = false;
+	}
+	return squares;
+}
+
+dudes.valid_attacks = function(dudeObj) {
+	if(!dudeObj.canAttack) {
+		return new Array();
+	}
+
+	var filter = function(row, col){return(bl.isValidAttack(row, col));}
+
+	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.range, filter);
+	if(squares.length <= 0 && !dudeObj.canMove) {
+		dudeObj.canAttack = false;
+	}
+	return squares;
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+dudesPriv.createDude = function(owner, row, col, type) {
+	this.owner     = owner;
+	this.row       = row;
+	this.col       = col;
+	this.type      = type;
+	this.canAttack = true;
+	this.canMove   = true;
+	this.speed     = dudesPriv.speed[type];
+	this.range     = dudesPriv.range[type];
+	this.power     = dudesPriv.power[type];
+	this.health    = dudesPriv.health[type];
+	this.image     = blassets[type][owner].clone();
+	this.bigImage  = blassets[type]['Portrait'].clone();
+	board.add_dude(this);
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
+//////////////////////////////////////////////////////////////////////////// 

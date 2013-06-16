@@ -1,15 +1,11 @@
 bl.GameStatus = 'CharSelection';
 bl.CurrPlayer = 0;
-		
-bl.onGridClick = function(ev)
+bl.selected_dude = null;
+
+bl.select = function(row, col, dude, attack_target, move_target)
 {
-	var ch, dude, squares;
-
-	ch = bl.getChar(ev.target);
-	if(ch != null)
+	if(dude != null)
 	{
-		dude = ch.dude;
-
 		// set top left text objects with dude info
 		console.log("Selected dude's stats...");
 		console.log("health: "+dude.health);
@@ -21,38 +17,32 @@ bl.onGridClick = function(ev)
 	switch(bl.GameStatus)
 	{
 		case 'CharSelected':
-			dude = ev.target.origin;
-			if (ev.target.validMove)
+			if(move_target)
 			{
-				addChar(dude.image, ev.target.parent);
-				dudes.move(dude, ev.target.row, ev.target.col);
+				dudes.move(bl.selected_dude, row, col);
 			}
-			else if (ev.target.validAttack)
+			else if(attack_target)
 			{
 				dudes.attack(dude);
-				bl.StartFight(dude, bl.getChar(ev.target).dude);
+				bl.StartFight(bl.selected_dude, dude);
 			}
 		case 'CharSelection':
-			clearAll();
-			dudes.update(bl.CurrPlayer);
-			dudes.update(bl.otherPlayer());
-			window.maze.stage.update();
-			if (bl.hasActiveChar(ev.target))
+			board.clear();
+			stage.update();
+			if(dude && dude.owner == bl.CurrPlayer)
 			{
-				dude = bl.getChar(ev.target).dude;
-				squares = dudes.valid_moves(dude);
-				setHighlights(squares, 'move', dude);
-				squares = dudes.valid_attacks(dude);
-				setHighlights(squares, 'target', dude);
+				board.highlight('green', dudes.valid_moves(dude));
+				board.highlight('red', dudes.valid_attacks(dude));
+				bl.selected_dude = dude;
 				bl.GameStatus = 'CharSelected';
 			}
 			else
 			{
-			    bl.GameStatus = 'CharSelection';
+				bl.GameStatus = 'CharSelection';
 			}
 			break;
 	}
-	window.maze.stage.update();
+	stage.update();
 }
 
 bl.otherPlayer = function()
@@ -65,42 +55,25 @@ bl.endTurn = function()
 	dudes.reset_all(bl.CurrPlayer);
 	bl.CurrPlayer = bl.otherPlayer();
 	bl.GameStatus = 'CharSelection';
-	clearAll();
-	dudes.update(bl.CurrPlayer);
-	dudes.update(bl.otherPlayer());
+	board.clear();
 	totems.check();
-	window.maze.stage.update();
+	stage.update();
 }
 
-bl.hasActiveChar = function(square)
+bl.isDudeActive = function(dude)
 {
-	var ch = bl.getChar(square);
-	if (ch == null)
-		return false;
-	if (ch.dude.owner == bl.CurrPlayer)
-		return true;
-	return false;
+	return (dude && dude.owner == bl.CurrPlayer);
 }
 
-bl.hasEnemyChar = function(square)
+bl.isValidMove = function(row, col)
 {
-	var ch = bl.getChar(square);
-	if (ch == null)
-		return false;
-	if (ch.dude.owner != bl.CurrPlayer)
-		return true;
-	return false;
+	return (board.get_dude(row, col) == null);
 }
 
-bl.getChar = function(square)
+bl.isValidAttack = function(row, col)
 {
-	var ch = square.parent.getChildByName('char');
-	if (ch == null)
-		return null;
-	if (ch.getNumChildren() < 1)
-		return null;
-	ch = ch.getChildAt(0);
-	return ch;
+	var dude = board.get_dude(row, col);
+	return (dude && !bl.isDudeActive(dude));
 }
 
 bl.checkForWin = function()

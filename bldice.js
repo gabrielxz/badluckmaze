@@ -60,6 +60,48 @@ dice.roll_dice = function(player) {
 	}
 }
 
+dice.init = function() {
+	// Create 2D array of player dice images [side][missing_pips]
+	blassets['dice_p'] = new Array();
+	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		blassets['dice_p'].push(new Array());
+		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
+			blassets['dice_p'][s].push(dicePriv.createImg(s+1, m));
+		}
+	}
+
+	// Create 2D array of results images [side][missing_pips]
+	// Note: Same as player dice for now - could be different
+	blassets['dice_r'] = new Array();
+	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		blassets['dice_r'].push(new Array());
+		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
+			blassets['dice_r'][s].push(dicePriv.createImg(s+1, m));
+		}
+	}
+
+	// Create 2D array of dice objects [player][die]
+	dicePriv.dice = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.dice.push(new Array());
+		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+			dicePriv.dice[p].push(new dicePriv.createDie());
+		}
+	}
+
+	// Create list of removals (die side ptrs) for each player
+	dicePriv.removed = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.removed.push(new Array());
+	}
+
+	// Store a counter of overflow pips for each player
+	dicePriv.extra_pips = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.extra_pips.push(0);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
@@ -141,46 +183,3 @@ dicePriv.rand = function(max) {
 	return Math.floor(Math.random() * max);
 }
 
-dicePriv.init = function() {
-	// Create 2D array of player dice images [side][missing_pips]
-	blassets['dice_p'] = new Array();
-	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
-		blassets['dice_p'].push(new Array());
-		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
-			blassets['dice_p'][s].push(dicePriv.createImg(s+1, m));
-		}
-	}
-
-	// Create 2D array of results images [side][missing_pips]
-	// Note: Same as player dice for now - could be different
-	blassets['dice_r'] = new Array();
-	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
-		blassets['dice_r'].push(new Array());
-		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
-			blassets['dice_r'][s].push(dicePriv.createImg(s+1, m));
-		}
-	}
-
-	// Create 2D array of dice objects [player][die]
-	dicePriv.dice = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.dice.push(new Array());
-		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
-			dicePriv.dice[p].push(new dicePriv.createDie());
-		}
-	}
-
-	// Create list of removals (die side ptrs) for each player
-	dicePriv.removed = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.removed.push(new Array());
-	}
-
-	// Store a counter of overflow pips for each player
-	dicePriv.extra_pips = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.extra_pips.push(0);
-	}
-}
-
-dicePriv.init();
