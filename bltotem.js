@@ -1,5 +1,6 @@
 RED_PLAYER  = 0;
 BLUE_PLAYER = 1;
+NO_PLAYER   = 99;
 
 totems = new Object();
 totemsPriv = new Object();
@@ -14,7 +15,7 @@ totems.check = function() {
 	for(var i in totemsPriv.totems) {
 		totemObj = totemsPriv.totems[i];
 
-		dude = board.get_dude(totemObj.row, totemObj.col);
+		dude = board.get_item(totemObj.row, totemObj.col, 'Dude');
 		if (bl.isDudeActive(dude)) {
 			totemsPriv.take(totemObj, dude);
 		}
@@ -23,19 +24,6 @@ totems.check = function() {
 }
 
 totems.init = function() {
-	blassets['Minor'] = new Array();
-	blassets['Minor'][RED_PLAYER] = new createjs.Bitmap('assets/totemRed.png') ;
-	blassets['Minor'][BLUE_PLAYER] = new createjs.Bitmap('assets/totemBlue.png') ;
-	blassets['Minor']['Dark'] = new createjs.Bitmap('assets/totem.png') ;
-	blassets['Major'] = new Array();
-	blassets['Major'][RED_PLAYER] = new createjs.Bitmap('assets/totemRed.png') ;
-	blassets['Major'][BLUE_PLAYER] = new createjs.Bitmap('assets/totemBlue.png') ;
-	blassets['Major']['Dark'] = new createjs.Bitmap('assets/totem.png') ;
-	blassets['Pit'] = new Array();
-	blassets['Pit'][RED_PLAYER] = new createjs.Bitmap('assets/centerred.png') ;
-	blassets['Pit'][BLUE_PLAYER] = new createjs.Bitmap('assets/centerblue.png') ;
-	blassets['Pit']['Dark'] = new createjs.Bitmap('assets/centerPic.png') ;
-
 	totemsPriv.badLuck = new Array();
 	totemsPriv.badLuck['Minor'] =  2;
 	totemsPriv.badLuck['Major'] =  4;
@@ -60,7 +48,7 @@ totems.init = function() {
 //////////////////////////////////////////////////////////////////////////// 
 
 totemsPriv.createTotem = function(row, col, type) {
-	this.owner    = null;
+	this.owner    = NO_PLAYER;
 	this.row      = row;
 	this.col      = col;
 	this.type     = type;
@@ -68,12 +56,12 @@ totemsPriv.createTotem = function(row, col, type) {
 	this.goodLuck = totemsPriv.goodLuck[type];
 
 	this.images = new Array();
-	this.images[RED_PLAYER]  = blassets[type][RED_PLAYER].clone();
-	this.images[BLUE_PLAYER] = blassets[type][BLUE_PLAYER].clone();
-	this.images['Dark']      = blassets[type]['Dark'].clone();
+	this.images[RED_PLAYER]  = media.get_totem_img(type, RED_PLAYER);
+	this.images[BLUE_PLAYER] = media.get_totem_img(type, BLUE_PLAYER);
+	this.images[NO_PLAYER]   = media.get_totem_img(type, NO_PLAYER);
 
-	this.image = this.images['Dark'];
-	board.add_totem(this);
+	this.image = this.images[this.owner];
+	board.add_item('Totem', this);
 }
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -115,8 +103,8 @@ totemsPriv.take = function(totemObj, dude) {
 
 	totemObj.image = totemObj.images[newOwner];
 	totemObj.owner = newOwner;
-	board.remove_totem(totemObj);
-	board.add_totem(totemObj);
+	board.remove_item('Totem', totemObj);
+	board.add_item('Totem', totemObj);
 }
 
 

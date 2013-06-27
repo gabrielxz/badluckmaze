@@ -67,12 +67,12 @@ bl.isDudeActive = function(dude)
 
 bl.isValidMove = function(row, col)
 {
-	return (board.get_dude(row, col) == null);
+	return (board.get_item(row, col, 'Dude') == null);
 }
 
 bl.isValidAttack = function(row, col)
 {
-	var dude = board.get_dude(row, col);
+	var dude = board.get_item(row, col, 'Dude');
 	return (dude && !bl.isDudeActive(dude));
 }
 

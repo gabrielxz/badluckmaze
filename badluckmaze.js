@@ -11,28 +11,12 @@ window.maze.HOFFSET = 960;
 function init() {
 	stage = new createjs.Stage("myCanvas");
 
+	media.init();
 	board.init();
 	dudes.init();
 	totems.init();
 	dice.init();
 
-	// begin loading sounds - Gabriel's code
-	var assetsPath = "assets/";
-	manifest = [
-		{id:"movement", src:assetsPath+"movement.mp3"}, {id:"mainGameMusic", src:assetsPath+"mainGameMusic.mp3"},
-		{id:"archerAttack", src:assetsPath+"archerAttack2.mp3"},{id:"blueWins", src:assetsPath+"blueWins.mp3"},
-		{id:"death", src:assetsPath+"deathScream.mp3"},{id:"diceRoll", src:assetsPath+"diceRoll.mp3"},
-		{id:"fightPopupTransition", src:assetsPath+"fightPopupTransition.mp3"},{id:"morrighanTotem", src:assetsPath+"morrighanTotem.mp3"},
-		{id:"nomofo", src:assetsPath+"nomofo.mp3"},{id:"redWins", src:assetsPath+"redWins.mp3"},
-		{id:"splashPageMusic", src:assetsPath+"splashPageMusic.mp3"},{id:"warriorAttack", src:assetsPath+"warriorAttack.mp3"},
-		{id:"knightAttack", src:assetsPath+"knightAttack.mp3"}
-	];
-	preload = new createjs.LoadQueue();
-	preload.installPlugin(createjs.Sound);
-	preload.addEventListener("complete", doneLoading);
-	preload.loadManifest(manifest);
-	// end loading sounds
-	
 	//modal cover sheet
 	grid = new createjs.Container();
 	grid.name = 'modal'
@@ -163,12 +147,6 @@ function init() {
 	grid.addChild(square);
 
 	stage.update();
-}
-
-function doneLoading()
-{
-	// start the music
-    createjs.Sound.play("mainGameMusic", createjs.Sound.INTERRUPT_NONE, 0, 10000, 0, 0.1, 0);
 }
 
 function setFightDice(p2d1,p2d2,p1d1,p1d2,firstRun)

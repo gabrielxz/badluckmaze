@@ -44,42 +44,13 @@ dice.gain_pip = function(player) {
 	dicePriv.update_side(sideObj);
 }
 
-dice.roll_die = function(player, die) {
-	var r, dieObj, sideObj;
-
-	r = dicePriv.rand(NUM_SIDES_PER_DIE)
-	dieObj = dicePriv.dice[player][die];
-	sideObj = dieObj.sides[r];
-
-	dieObj.result = sideObj;
-}
-
 dice.roll_dice = function(player) {
 	for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
-		dice.roll_die(player, d);
+		dicePriv.roll_die(player, d);
 	}
 }
 
 dice.init = function() {
-	// Create 2D array of player dice images [side][missing_pips]
-	blassets['dice_p'] = new Array();
-	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
-		blassets['dice_p'].push(new Array());
-		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
-			blassets['dice_p'][s].push(dicePriv.createImg(s+1, m));
-		}
-	}
-
-	// Create 2D array of results images [side][missing_pips]
-	// Note: Same as player dice for now - could be different
-	blassets['dice_r'] = new Array();
-	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
-		blassets['dice_r'].push(new Array());
-		for(var m = 0; m < NUM_SIDES_PER_DIE; m++) {
-			blassets['dice_r'][s].push(dicePriv.createImg(s+1, m));
-		}
-	}
-
 	// Create 2D array of dice objects [player][die]
 	dicePriv.dice = new Array();
 	for(var p = 0; p < NUM_PLAYERS; p++) {
@@ -133,13 +104,13 @@ dicePriv.createSide = function(side) {
 	this.base_val = side + 1;
 	this.missing = 0;
 
-	// Clone image for each number of missing pips
+	// Store image for each number of missing pips
 	// One for player die, one for result die
 	this.images_p = new Array();
 	this.images_r = new Array();
-	for(var m = 0; m <= side; m++) {
-		this.images_p.push(blassets['dice_p'][side][m].clone());
-		this.images_r.push(blassets['dice_r'][side][m].clone());
+	for(var m = 0; m <= this.base_val; m++) {
+		this.images_p.push(media.get_die_img(this.base_val, m));
+		this.images_r.push(media.get_die_img(this.base_val, m));
 	}
 
 	dicePriv.update_side(this);
@@ -156,23 +127,19 @@ dicePriv.createDie = function() {
 	this.result = this.sides[0];
 }
 
-dicePriv.createImg = function(base, missing) {
-	var name = 'assets/dice/die_';
-	if(base - missing <= 0) {
-		name += '0';
-	} else {
-		name += base;
-		if(missing > 0) {
-			name += '-' + missing;
-		}
-	}
-	name += '.png';
-	return new createjs.Bitmap(name)
-}
-
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
+
+dicePriv.roll_die = function(player, die) {
+	var r, dieObj, sideObj;
+
+	r = dicePriv.rand(NUM_SIDES_PER_DIE)
+	dieObj = dicePriv.dice[player][die];
+	sideObj = dieObj.sides[r];
+
+	dieObj.result = sideObj;
+}
 
 dicePriv.update_side = function(sideObj) {
 	sideObj.image_p = sideObj.images_p[sideObj.missing];

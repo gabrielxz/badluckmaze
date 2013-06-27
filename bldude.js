@@ -12,12 +12,12 @@ dudesPriv = new Object();
 //////////////////////////////////////////////////////////////////////////// 
 
 dudes.move = function(dudeObj, row, col) {
-	board.remove_dude(dudeObj);
+	board.remove_item('Dude', dudeObj);
 	dudeObj.row = row;
 	dudeObj.col = col;
-	board.add_dude(dudeObj);
+	board.add_item('Dude', dudeObj);
 	dudeObj.canMove = false;
-	createjs.Sound.play("movement", createjs.Sound.INTERRUPT_NONE, 0, 1000, 0, 1, 0);
+	media.play_sound("movement", 1000, 1);
 }
 
 dudes.attack = function(dudeObj) {
@@ -27,9 +27,9 @@ dudes.attack = function(dudeObj) {
 
 dudes.kill = function(dudeObj) {
 	dudeObj.health = 0;
-	board.remove_dude(dudeObj);
+	board.remove_item('Dude', dudeObj);
 	stage.update();
-	createjs.Sound.play("deathScream", createjs.Sound.INTERRUPT_NONE, 0, 0, 0, 0.75, 0);
+	media.play_sound("deathScream", 0, 0.75);
 
 	// Does this belong here?
 	bl.checkForWin();
@@ -53,19 +53,6 @@ dudes.reset_all = function(player)
 }
 
 dudes.init = function() {
-	blassets['Archer'] = new Array();
-	blassets['Archer'][RED_PLAYER] = new createjs.Bitmap('assets/archerfront.png');
-	blassets['Archer'][BLUE_PLAYER] = new createjs.Bitmap('assets/archerback.png');
-	blassets['Archer']['Portrait'] = new createjs.Bitmap('assets/archerbig.png');
-	blassets['Rogue'] = new Array();
-	blassets['Rogue'][RED_PLAYER] = new createjs.Bitmap('assets/warriorfront.png');
-	blassets['Rogue'][BLUE_PLAYER] = new createjs.Bitmap('assets/warriorback.png');
-	blassets['Rogue']['Portrait'] = new createjs.Bitmap('assets/warriorbig.png');
-	blassets['Warrior'] = new Array();
-	blassets['Warrior'][RED_PLAYER] = new createjs.Bitmap('assets/knightfront.png');
-	blassets['Warrior'][BLUE_PLAYER] = new createjs.Bitmap('assets/knightback.png');
-	blassets['Warrior']['Portrait'] = new createjs.Bitmap('assets/knightbig.png');
-
 	dudesPriv.speed = new Array();
 	dudesPriv.speed['Archer'] =   2;
 	dudesPriv.speed['Rogue'] =    2;
@@ -170,9 +157,9 @@ dudesPriv.createDude = function(owner, row, col, type) {
 	this.range     = dudesPriv.range[type];
 	this.power     = dudesPriv.power[type];
 	this.health    = dudesPriv.health[type];
-	this.image     = blassets[type][owner].clone();
-	this.bigImage  = blassets[type]['Portrait'].clone();
-	board.add_dude(this);
+	this.image     = media.get_dude_img(type, owner);
+	this.bigImage  = media.get_portrait_img(type);
+	board.add_item('Dude', this);
 }
 
 //////////////////////////////////////////////////////////////////////////// 

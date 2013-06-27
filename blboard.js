@@ -12,36 +12,22 @@ boardPriv = new Object();
 /////////////////////////// -- PUBLIC MUTATORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-board.add_dude = function(dude) {
-	var square = boardPriv.grid[dude.row][dude.col];
-	dude.image.x = 0 - Math.floor(dude.image.image.width / 2);
-	dude.image.y = 0 - dude.image.image.height;
-	boardPriv.add_item(dude, 'dude', square);
-	square.dude = dude;
-}
-
-board.remove_dude = function(dude) {
-	var square = boardPriv.grid[dude.row][dude.col];
-	boardPriv.remove_item('dude', square);
-	square.dude = null;
-}
-
-board.add_totem = function(totem) {
-	var square = boardPriv.grid[totem.row][totem.col];
-	totem.image.x = 0 - Math.floor(totem.image.image.width/2);
-	totem.image.y = 10 - totem.image.image.height;
-	// FIXME: Change the png files so this is unnecessary
-	if(totem.type == 'Pit') {
-		totem.image.y += 15;
+board.add_item = function(type, item) {
+	var square = boardPriv.grid[item.row][item.col];
+	var slot = square.base.getChildByName(type);
+	if(slot.getNumChildren() > 0) {
+		console.log("Error: Add item - occupied", square, item);
+		return;
 	}
-	boardPriv.add_item(totem, 'totem', square);
-	square.totem = totem;
+	slot.addChild(item.image);
+	slot.item = item;
 }
 
-board.remove_totem = function(totem) {
-	var square = boardPriv.grid[totem.row][totem.col];
-	boardPriv.remove_item('totem', square);
-	square.totem = null;
+board.remove_item = function(type, item) {
+	var square = boardPriv.grid[item.row][item.col];
+	var slot = square.base.getChildByName(type);
+	slot.removeAllChildren();
+	slot.item = null;
 }
 
 board.highlight = function(color, squares) {
@@ -82,9 +68,9 @@ board.init = function() {
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-board.get_dude = function(row, col) {
+board.get_item = function(row, col, type) {
 	var square = boardPriv.grid[row][col];
-	return square.dude;
+	return square.base.getChildByName(type).item;
 }
 
 board.get_squares = function(row, col, radius, filter) {
@@ -145,15 +131,13 @@ boardPriv.newTile = function(name, color) {
 boardPriv.createSquare = function(row, col) {
 	this.row   = row;
 	this.col   = col;
-	this.dude  = null;
-	this.totem = null;
 	this.base  = new createjs.Container();
 
 	this.base.hitArea = boardPriv.click;
 	this.base.addChild(boardPriv.newTile('red',   'FF0000'));
 	this.base.addChild(boardPriv.newTile('green', '00FF00'));
-	this.base.addChild(boardPriv.newSlot('totem'));
-	this.base.addChild(boardPriv.newSlot('dude'));
+	this.base.addChild(boardPriv.newSlot('Totem'));
+	this.base.addChild(boardPriv.newSlot('Dude'));
 
 	this.base.x = H_OFFSET + (SQUARE_WIDTH/2+1) * col - (SQUARE_WIDTH/2+1) * (row + 1);
 	this.base.y = V_OFFSET + (SQUARE_HEIGHT/2+1) * col + (SQUARE_HEIGHT/2+1) * row;
@@ -176,24 +160,11 @@ boardPriv.highlight = function(color, alpha, squares) {
 	}
 }
 
-boardPriv.add_item = function(item, type, square) {
-	var slot = square.base.getChildByName(type);
-	if(slot.getNumChildren() > 0) {
-		console.log("Error: Add item - occupied", square, item);
-		return;
-	}
-	slot.addChild(item.image);
-}
-
-boardPriv.remove_item = function(type, square) {
-	var slot = square.base.getChildByName(type);
-	slot.removeAllChildren();
-}
-
 boardPriv.onClick = function(click) {
 	var square = click.target.square;
+	var dude = square.base.getChildByName('Dude').item;
 	var red = square.base.getChildByName('red').on;
 	var green = square.base.getChildByName('green').on;
-	bl.select(square.row, square.col, square.dude, red, green);
+	bl.select(square.row, square.col, dude, red, green);
 }
 
