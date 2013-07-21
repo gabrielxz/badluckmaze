@@ -27,9 +27,16 @@ dudes.attack = function(dudeObj) {
 
 dudes.kill = function(dudeObj) {
 	dudeObj.health = 0;
+	dudeObj.speed = 0;
+	dudeObj.range = 0;
+	dudeObj.power = 0;
+	dudeObj.canMove = false;
+	dudeObj.canAttack = false;
 	board.remove_item('Dude', dudeObj);
 	stage.update();
 	media.play_sound("deathScream", 0, 0.75);
+
+	// TODO: Nice to have a dead portrait for fight screen
 
 	// Does this belong here?
 	bl.checkForWin();
@@ -42,8 +49,7 @@ dudes.wound = function(dudeObj, amount) {
 	}
 }
 
-dudes.reset_all = function(player)
-{
+dudes.reset_all = function(player) {
 	var dudeObj;
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
@@ -52,41 +58,6 @@ dudes.reset_all = function(player)
 	}
 }
 
-dudes.init = function() {
-	dudesPriv.speed = new Array();
-	dudesPriv.speed['Archer'] =   2;
-	dudesPriv.speed['Rogue'] =    2;
-	dudesPriv.speed['Warrior'] =  1;
-	dudesPriv.range = new Array();
-	dudesPriv.range['Archer'] =   3;
-	dudesPriv.range['Rogue'] =    1;
-	dudesPriv.range['Warrior'] =  1;
-	dudesPriv.power = new Array();
-	dudesPriv.power['Archer'] =   4;
-	dudesPriv.power['Rogue'] =    8;
-	dudesPriv.power['Warrior'] =  4;
-	dudesPriv.health = new Array();
-	dudesPriv.health['Archer'] =  8;
-	dudesPriv.health['Rogue'] =   16;
-	dudesPriv.health['Warrior'] = 32;
-
-	dudesPriv.dudes = new Array();
-	dudesPriv.dudes[RED_PLAYER] = new Array();
-	dudesPriv.dudes[BLUE_PLAYER] = new Array();
-
-	// Change when player choice is added
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 1,  'Archer'));
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 5,  'Rogue'));
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 6,  'Warrior'));
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 7,  'Rogue'));
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 11, 'Archer'));
-
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 1,  'Archer'));
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 5,  'Rogue'));
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 6,  'Warrior'));
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 7,  'Rogue'));
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 11, 'Archer'));
-}
 
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
@@ -158,10 +129,52 @@ dudesPriv.createDude = function(owner, row, col, type) {
 	this.power     = dudesPriv.power[type];
 	this.health    = dudesPriv.health[type];
 	this.image     = media.get_dude_img(type, owner);
-	this.bigImage  = media.get_portrait_img(type);
+	this.portrait  = media.get_portrait_img(type);
 	board.add_item('Dude', this);
 }
 
 //////////////////////////////////////////////////////////////////////////// 
-////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
+
+dudes.init = function() {
+	dudesPriv.speed = new Array();
+	dudesPriv.speed['Archer'] =   2;
+	dudesPriv.speed['Rogue'] =    2;
+	dudesPriv.speed['Warrior'] =  1;
+	dudesPriv.range = new Array();
+	dudesPriv.range['Archer'] =   3;
+	dudesPriv.range['Rogue'] =    1;
+	dudesPriv.range['Warrior'] =  1;
+	dudesPriv.power = new Array();
+	dudesPriv.power['Archer'] =   4;
+	dudesPriv.power['Rogue'] =    8;
+	dudesPriv.power['Warrior'] =  4;
+	dudesPriv.health = new Array();
+	dudesPriv.health['Archer'] =  8;
+	dudesPriv.health['Rogue'] =   16;
+	dudesPriv.health['Warrior'] = 32;
+
+	dudesPriv.dudes = new Array();
+	dudesPriv.dudes[RED_PLAYER] = new Array();
+	dudesPriv.dudes[BLUE_PLAYER] = new Array();
+
+	// TODO: Change when player choice is added
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 1,  'Archer'));
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 5,  'Rogue'));
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 6,  'Warrior'));
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 7,  'Rogue'));
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 0, 11, 'Archer'));
+
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 1,  'Archer'));
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 5,  'Rogue'));
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 6,  'Warrior'));
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 7,  'Rogue'));
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 11, 'Archer'));
+
+	// FOR TESTING ONLY
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 4, 5,  'Archer'));
+	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 5, 5,  'Warrior'));
+	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 6, 5,  'Rogue'));
+}
+

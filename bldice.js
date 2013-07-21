@@ -50,29 +50,6 @@ dice.roll_dice = function(player) {
 	}
 }
 
-dice.init = function() {
-	// Create 2D array of dice objects [player][die]
-	dicePriv.dice = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.dice.push(new Array());
-		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
-			dicePriv.dice[p].push(new dicePriv.createDie());
-		}
-	}
-
-	// Create list of removals (die side ptrs) for each player
-	dicePriv.removed = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.removed.push(new Array());
-	}
-
-	// Store a counter of overflow pips for each player
-	dicePriv.extra_pips = new Array();
-	for(var p = 0; p < NUM_PLAYERS; p++) {
-		dicePriv.extra_pips.push(0);
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
@@ -148,5 +125,32 @@ dicePriv.update_side = function(sideObj) {
 
 dicePriv.rand = function(max) {
 	return Math.floor(Math.random() * max);
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+dice.init = function() {
+	// Create 2D array of dice objects [player][die]
+	dicePriv.dice = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.dice.push(new Array());
+		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+			dicePriv.dice[p].push(new dicePriv.createDie());
+		}
+	}
+
+	// Create list of removals (die side ptrs) for each player
+	dicePriv.removed = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.removed.push(new Array());
+	}
+
+	// Store a counter of overflow pips for each player
+	dicePriv.extra_pips = new Array();
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		dicePriv.extra_pips.push(0);
+	}
 }
 

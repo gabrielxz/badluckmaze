@@ -23,8 +23,7 @@ bl.select = function(row, col, dude, attack_target, move_target)
 			}
 			else if(attack_target)
 			{
-				dudes.attack(dude);
-				bl.StartFight(bl.selected_dude, dude);
+				fight.begin(bl.selected_dude, dude);
 			}
 		case 'CharSelection':
 			board.clear();

@@ -1,13 +1,32 @@
+NUM_DICE_PER_PLAYER = 2;
 
-bl.fight_init = function() {
-	window.fight = new Object();
-	window.fight.offense_roll = 0;
-	window.fight.defense_roll = 0;
-	window.fight.damage = 0;
+fight = new Object();
+fightPriv = new Object();
+
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- PUBLIC MUTATORS -- //////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+fight.begin = function(attacker, defender) {
+	fightPriv.attacker = attacker;
+	fightPriv.defender = defender;
+
+	fightPriv.offense_roll = 0;
+	fightPriv.defense_roll = 0;
+	fightPriv.damage = 0;
+
+	fightPriv.set_info();
+	fightPriv.display.visible = 1;
 }
 
-bl.fight = function(attacker, defender) {
-	var offense, defense, damage;
+//////////////////////////////////////////////////////////////////////////// 
+////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+fightPriv.attack = function() {
+	var offense, defense, damage, attacker, defender;
+	attacker = fightPriv.attacker;
+	defender = fightPriv.defender;
 
 	dice.roll_dice(attacker.owner);
 	offense = dice.get_result_val(attacker.owner);
@@ -16,105 +35,380 @@ bl.fight = function(attacker, defender) {
 	defense = dice.get_result_val(defender.owner);
 
 	damage = offense + attacker.power - defense;
-	if (damage < 0) {
-		damage = 0;
-	}
+	damage = Math.max(damage, 0);
 
+	dudes.attack(attacker);
 	dudes.wound(defender, damage);
 
-	window.fight.offense_roll = offense;
-	window.fight.defense_roll = defense;
-	window.fight.damage  = damage;
+	fightPriv.offense_roll = offense;
+	fightPriv.defense_roll = defense;
+	fightPriv.damage  = damage;
+
+	fightPriv.set_info();
 }
 
-bl.StartFight = function(attacker, defender)
-{
-	var fs = window.maze.fightpage;
-	var square;
-	var p1, p2;
-	window.maze.modal.alpha = 1;
-	fs.alpha = 1;
-	
-	fs.removeChildAt(1,2);
-	fs.attacker = attacker;
-	fs.defender = defender;
-	
-	if (attacker.owner == 0)
-	{
-		p1 = attacker;
-		p2 = defender;
-	}
-	else
-	{
-		p1 = defender;
-		p2 = attacker;
-	}
-	
-	//player 2 portrait
-	square = p1.bigImage.clone();
-	square.x = 660;
-	square.y = 70;
-	square.alpha = 1;
-	fs.addChildAt(square, 1);
-	
-	//player 1 portrait
-	square = p2.bigImage.clone();
-	square.x = 40;
-	square.y = 70;
-	square.alpha = 1;
-	fs.addChild(square, 1);
+fightPriv.set_info = function() {
+	fightPriv.set_attacker_info();
+	fightPriv.set_defender_info();
 
-	fs.getChildByName('attacker').text = (attacker.owner ? 'Blue' : 'Red') + ' ' + attacker.type;
-	fs.getChildByName('damageDealt').text = '';
-	fs.getChildByName('p1name').text = 'Blue ' + p2.type;
-	fs.getChildByName('p1hp').text = p2.health + ' HP';
-	fs.getChildByName('p2name').text = 'Red ' + p1.type;
-	fs.getChildByName('p2hp').text = p1.health + ' HP';
-	fs.getChildByName('p1stats').text = (p2 == attacker ? '+' + p2.power + ' Power' : '');
-	fs.getChildByName('p2stats').text = (p1 == attacker ? '+' + p1.power + ' Power' : '');
-
-	fs.getChildByName('button').text = 'Roll';
-
-	bl.GameStatus = 'FightStarted';
-
-	fs.getStage().update();
+	fightPriv.results_info.attack.text = fightPriv.offense_roll;
+	fightPriv.results_info.power.text = fightPriv.attacker.power;
+	fightPriv.results_info.defense.text = fightPriv.defense_roll;
+	fightPriv.results_info.damage.text = fightPriv.damage;
 }
 
-bl.onFightClick = function(ev)
-{
-	var fs = window.maze.fightpage;
-	var p1, p2;
+fightPriv.set_attacker_info = function() {
+	var dude = fightPriv.attacker;
+	var info = fightPriv.attacker_info;
 
-	if (fs.attacker.owner == 0)
-	{
-		p1 = fs.attacker;
-		p2 = fs.defender;
-	}
-	else
-	{
-		p1 = fs.defender;
-		p2 = fs.attacker;
-	}
-
-	switch (bl.GameStatus)
-	{
-		case 'FightStarted':
-			fs.getChildByName('button').text = 'Close';
-			bl.fight(fs.attacker,fs.defender);
-			fs.getChildByName('damageDealt').text = window.fight.damage + ' Damage!';
-			setFightDice(dice.get_result_img(0, 0), dice.get_result_img(0, 1), 
-			             dice.get_result_img(1, 0), dice.get_result_img(1, 1));
-			fs.getChildByName('p1hp').text = p2.health + ' HP';
-			fs.getChildByName('p2hp').text = p1.health + ' HP';
-
-			bl.GameStatus = 'FightResolved';
-			break;
-		case 'FightResolved':
-			window.maze.modal.alpha = 0;
-			bl.GameStatus = 'CharSelection';
-			break;
-	}
-	window.maze.stage.update();
+	fightPriv.set_dude_info(info, dude);
+	info.stat.text = 'Power +' + dude.power;
 }
 
-bl.fight_init();
+fightPriv.set_defender_info = function() {
+	var dude = fightPriv.defender;
+	var info = fightPriv.defender_info;
+
+	fightPriv.set_dude_info(info, dude);
+	info.stat.text = 'Health ' + dude.health;
+}
+
+fightPriv.set_dude_info = function(info, dude) {
+	info.portrait.removeAllChildren();
+	info.portrait.addChild(dude.portrait);
+
+	info.title.text = fightPriv.player_map[dude.owner] + dude.type;
+
+	for(i in info.dice) {
+		info.dice[i].removeAllChildren();
+		info.dice[i].addChild(dice.get_result_img(dude.owner, i));
+	}
+}
+
+fightPriv.onClick = function(click) {
+	if(fightPriv.roll.visible) {
+		fightPriv.attack();
+		fightPriv.roll.visible = 0;
+		fightPriv.done.visible = 1;
+	} else {
+		fightPriv.display.visible = 0;
+		fightPriv.roll.visible = 1;
+		fightPriv.done.visible = 0;
+	}
+	stage.update();
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+fightPriv.newButton = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Roll';
+
+	item = new createjs.Text('Roll', '50pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+	fightPriv.roll = item;
+
+	item = new createjs.Text('Done', '50pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	item.visible = 0;
+	items.push(item);
+	fightPriv.done = item;
+
+	display.stack(container, items, 10);
+
+	// Background
+	item = new createjs.Shape();
+	item.graphics.f('AA0000').rr(0, 0, container.w, container.h, 12);
+	container.addChildAt(item, 0);
+	container.hitArea = item;
+	container.addEventListener('click', fightPriv.onClick);
+
+	return container;
+}
+
+fightPriv.newResults = function() {
+	var item, items = new Array();
+	var column, columns = new Array();
+	var container = new createjs.Container();
+	container.name = 'Results';
+
+	item = new createjs.Text('Attack:', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+
+	item = new createjs.Text('Power:', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+
+	item = new createjs.Text('Defense:', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+
+	item = new createjs.Text('Damage:', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+
+	column = new createjs.Container();
+	display.vertical(column, items, 5, 0);
+	columns.push(column);
+	items.length = 0;
+
+	item = new createjs.Text('', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+
+	item = new createjs.Text('+', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+
+	item = new createjs.Text('-', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+
+	item = new createjs.Text('=', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+
+	column = new createjs.Container();
+	display.vertical(column, items, 5, 0);
+	columns.push(column);
+	items.length = 0;
+
+	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	fightPriv.results_info.attack = item;
+
+	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	fightPriv.results_info.power = item;
+
+	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	fightPriv.results_info.defense = item;
+
+	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	fightPriv.results_info.damage = item;
+
+	column = new createjs.Container();
+	display.vertical(column, items, 5, 0);
+	columns.push(column);
+
+	display.horizontal(container, columns, 5, 0);
+
+	return container;
+}
+
+fightPriv.newVs = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Vs';
+
+	item = new createjs.Text('VS', '50pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+
+	item = new display.createSpacer(0, 50);
+	items.push(item);
+	
+	item = fightPriv.newResults();
+	item.align = 'center';
+	items.push(item);
+	
+	item = new display.createSpacer(0, 200);
+	items.push(item);
+	
+	item = fightPriv.newButton();
+	item.align = 'center';
+	items.push(item);
+	
+	display.vertical(container, items, 10, 0);
+
+	return container;
+}
+
+fightPriv.newStats = function(info) {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Stats';
+
+	item = new createjs.Text('== TITLE ==', '30pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	info.title = item;
+
+	item = new createjs.Text('== STAT ==', '30pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	items.push(item);
+	info.stat = item;
+
+	display.vertical(container, items, 5, 0);
+
+	return container;
+}
+
+fightPriv.newDice = function(info) {
+	var container = new createjs.Container();
+	var item, items = new Array();
+
+	container.name = 'Dice';
+	container.w = 0;
+	container.h = 0;
+
+	for(var i = 0; i < NUM_DICE_PER_PLAYER; i++) {
+		item = new createjs.Container();
+		item.name = 'Die ' + i;
+		item.w = 65;
+		item.h = 65;
+		item.scaleX = 0.5;
+		item.scaleY = 0.5;
+		items.push(item);
+		info.dice.push(item);
+	}
+
+	display.horizontal(container, items, 20, 0);
+
+	return container;
+}
+
+fightPriv.newDude = function(info) {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Dude Display';
+
+	item = new createjs.Container();
+	item.name = 'Portrait';
+	item.align = 'center';
+	item.w = 300;
+	item.h = 400;
+	items.push(item);
+	info.portrait = item;
+
+	item = fightPriv.newStats(info);
+	item.align = 'center';
+	items.push(item);
+
+	item = fightPriv.newDice(info);
+	item.align = 'center';
+	items.push(item);
+
+	display.vertical(container, items, 10, 0);
+
+	return container;
+}
+
+fightPriv.newFightPage = function() {
+	var info, item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Fight Page';
+
+	info = new fightPriv.createDudeInfo()
+	item = fightPriv.newDude(info);
+	items.push(item);
+	fightPriv.attacker_info = info;
+
+	item = fightPriv.newVs();
+	item.align = 'push';
+	items.push(item);
+
+	info = new fightPriv.createDudeInfo()
+	item = fightPriv.newDude(info);
+	items.push(item);
+	fightPriv.defender_info = info;
+
+	display.horizontal(container, items, 10, 10);
+
+	// Background
+	item = new createjs.Shape();
+	item.graphics.f('000000').rr(0, 0, container.w, container.h, 12);
+	container.addChildAt(item, 0);
+
+	return container;
+}
+
+fightPriv.newFightScreen = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Fight Screen';
+	
+	item = display.newModalCover();
+	items.push(item);
+
+	item = fightPriv.newFightPage();
+	item.align = 'center';
+	items.push(item);
+
+	display.stack(container, items, 0);
+
+	return container;
+}
+
+fightPriv.createDudeInfo = function() {
+	this.portrait = null;
+	this.title = null;
+	this.stat = null;
+	this.dice = new Array();
+}
+
+fightPriv.createResultsInfo = function() {
+	this.attack = null;
+	this.power = null;
+	this.defense = null;
+	this.damage = null;
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+fight.init = function() {
+	fightPriv.offense_roll = 0;
+	fightPriv.defense_roll = 0;
+	fightPriv.damage = 0;
+	fightPriv.attacker = null;
+	fightPriv.attacker_info = null;
+	fightPriv.defender = null;
+	fightPriv.defender_info = null;
+	fightPriv.results_info = new fightPriv.createResultsInfo();
+
+	fightPriv.player_map = new Array();
+	fightPriv.player_map[RED_PLAYER]  = 'Red ';
+	fightPriv.player_map[BLUE_PLAYER] = 'Blue ';
+
+	fightPriv.display = fightPriv.newFightScreen();
+	stage.addChild(fightPriv.display);
+
+	fightPriv.display.visible = 0;
+}
+

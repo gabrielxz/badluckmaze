@@ -7,74 +7,12 @@ media = new Object();
 mediaPriv = new Object();
 
 //////////////////////////////////////////////////////////////////////////// 
-/////////////////////////// -- PUBLIC MUTATORS -- //////////////////////////
-//////////////////////////////////////////////////////////////////////////// 
-
-media.init = function() {
-	var manifest = new Array();
-	var side, base, missing;
-
-	mediaPriv.player_map = new Array();
-	mediaPriv.player_map[RED_PLAYER]  = '_red';
-	mediaPriv.player_map[BLUE_PLAYER] = '_blue';
-	mediaPriv.player_map[NO_PLAYER]   = '_none';
-
-	mediaPriv.images = new Array();
-
-	// Dudes
-	mediaPriv.load_dude_img('Archer',  RED_PLAYER);
-	mediaPriv.load_dude_img('Archer',  BLUE_PLAYER);
-	mediaPriv.load_dude_img('Rogue',   RED_PLAYER);
-	mediaPriv.load_dude_img('Rogue',   BLUE_PLAYER);
-	mediaPriv.load_dude_img('Warrior', RED_PLAYER);
-	mediaPriv.load_dude_img('Warrior', BLUE_PLAYER);
-
-	// Portraits
-	mediaPriv.load_portrait_img('Archer');
-	mediaPriv.load_portrait_img('Rogue');
-	mediaPriv.load_portrait_img('Warrior');
-
-	// Totems
-	mediaPriv.load_totem_img('Totem', RED_PLAYER);
-	mediaPriv.load_totem_img('Totem', BLUE_PLAYER);
-	mediaPriv.load_totem_img('Totem', NO_PLAYER);
-	mediaPriv.load_totem_img('Pit',   RED_PLAYER);
-	mediaPriv.load_totem_img('Pit',   BLUE_PLAYER);
-	mediaPriv.load_totem_img('Pit',   NO_PLAYER);
-
-	// Dice
-	for(var side = 0; side < NUM_SIDES_PER_DIE; side++) {
-		base = side + 1;
-		for(var missing = 0; missing <= base; missing++) {
-			mediaPriv.load_die_img(base, missing);
-		}
-	}
-
-	// FIXME: Should we use preload to get all the images too?
-	manifest = [
-		{id:'movement',             src:'assets/movement.mp3'},
-		{id:'mainGameMusic',        src:'assets/mainGameMusic.mp3'},
-		{id:'archerAttack',         src:'assets/archerAttack2.mp3'},
-		{id:'blueWins',             src:'assets/blueWins.mp3'},
-		{id:'death',                src:'assets/deathScream.mp3'},
-		{id:'diceRoll',             src:'assets/diceRoll.mp3'},
-		{id:'fightPopupTransition', src:'assets/fightPopupTransition.mp3'},
-		{id:'morrighanTotem',       src:'assets/morrighanTotem.mp3'},
-		{id:'nomofo',               src:'assets/nomofo.mp3'},
-		{id:'redWins',              src:'assets/redWins.mp3'},
-		{id:'splashPageMusic',      src:'assets/splashPageMusic.mp3'},
-		{id:'rogueAttack',          src:'assets/rogueAttack.mp3'},
-		{id:'warriorAttack',        src:'assets/warriorAttack.mp3'}
-	];
-	preload = new createjs.LoadQueue();
-	preload.installPlugin(createjs.Sound);
-	preload.addEventListener("complete", mediaPriv.done_loading);
-	preload.loadManifest(manifest);
-}
-
-//////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
+
+media.get_background_img = function() {
+	return mediaPriv.images['Background'].clone();
+}
 
 media.get_dude_img = function(type, player) {
 	var id = mediaPriv.dude_id(type, player);
@@ -185,6 +123,76 @@ mediaPriv.load_img = function(id, filename) {
 }
 
 mediaPriv.done_loading = function() {
-	media.play_sound("mainGameMusic", 10000, 0.1);
+	//media.play_sound("mainGameMusic", 10000, 0.1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+media.init = function() {
+	var manifest = new Array();
+	var side, base, missing;
+
+	mediaPriv.player_map = new Array();
+	mediaPriv.player_map[RED_PLAYER]  = '_red';
+	mediaPriv.player_map[BLUE_PLAYER] = '_blue';
+	mediaPriv.player_map[NO_PLAYER]   = '_none';
+
+	mediaPriv.images = new Array();
+
+	// Background
+	mediaPriv.load_img('Background', 'board');
+
+	// Dudes
+	mediaPriv.load_dude_img('Archer',  RED_PLAYER);
+	mediaPriv.load_dude_img('Archer',  BLUE_PLAYER);
+	mediaPriv.load_dude_img('Rogue',   RED_PLAYER);
+	mediaPriv.load_dude_img('Rogue',   BLUE_PLAYER);
+	mediaPriv.load_dude_img('Warrior', RED_PLAYER);
+	mediaPriv.load_dude_img('Warrior', BLUE_PLAYER);
+
+	// Portraits
+	mediaPriv.load_portrait_img('Archer');
+	mediaPriv.load_portrait_img('Rogue');
+	mediaPriv.load_portrait_img('Warrior');
+
+	// Totems
+	mediaPriv.load_totem_img('Totem', RED_PLAYER);
+	mediaPriv.load_totem_img('Totem', BLUE_PLAYER);
+	mediaPriv.load_totem_img('Totem', NO_PLAYER);
+	mediaPriv.load_totem_img('Pit',   RED_PLAYER);
+	mediaPriv.load_totem_img('Pit',   BLUE_PLAYER);
+	mediaPriv.load_totem_img('Pit',   NO_PLAYER);
+
+	// Dice
+	for(var side = 0; side < NUM_SIDES_PER_DIE; side++) {
+		base = side + 1;
+		for(var missing = 0; missing <= base; missing++) {
+			mediaPriv.load_die_img(base, missing);
+		}
+	}
+
+	// FIXME: Should we use preload to get all the images too?
+	manifest = [
+		{id:'movement',             src:'assets/movement.mp3'},
+		{id:'mainGameMusic',        src:'assets/mainGameMusic.mp3'},
+		{id:'archerAttack',         src:'assets/archerAttack2.mp3'},
+		{id:'blueWins',             src:'assets/blueWins.mp3'},
+		{id:'death',                src:'assets/deathScream.mp3'},
+		{id:'diceRoll',             src:'assets/diceRoll.mp3'},
+		{id:'fightPopupTransition', src:'assets/fightPopupTransition.mp3'},
+		{id:'morrighanTotem',       src:'assets/morrighanTotem.mp3'},
+		{id:'nomofo',               src:'assets/nomofo.mp3'},
+		{id:'redWins',              src:'assets/redWins.mp3'},
+		{id:'splashPageMusic',      src:'assets/splashPageMusic.mp3'},
+		{id:'rogueAttack',          src:'assets/rogueAttack.mp3'},
+		{id:'warriorAttack',        src:'assets/warriorAttack.mp3'}
+	];
+	preload = new createjs.LoadQueue();
+	preload.installPlugin(createjs.Sound);
+	preload.addEventListener("complete", mediaPriv.done_loading);
+	preload.loadManifest(manifest);
 }
 

@@ -42,28 +42,6 @@ board.clear = function() {
 	}
 }
 
-board.init = function() {
-	blassets['Board'] = new createjs.Bitmap('assets/board.png');
-
-	stage.addChild(blassets['Board']);
-
-	boardPriv.click = boardPriv.newTile('click', '000000');
-	boardPriv.click.alpha = 1;
-
-	boardPriv.grid = new Array();
-	for(var r = 0; r < BOARD_ROWS; r++) {
-		boardPriv.grid[r] = new Array();
-		for(var c = 0; c < BOARD_COLS; c++) {
-			boardPriv.grid[r][c] = new boardPriv.createSquare(r, c);
-			stage.addChild(boardPriv.grid[r][c].base);
-		}
-	}
-
-	boardPriv.colored_squares = new Array();
-	boardPriv.colored_squares['red'] = null;
-	boardPriv.colored_squares['green'] = null;
-}
-
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
@@ -166,5 +144,29 @@ boardPriv.onClick = function(click) {
 	var red = square.base.getChildByName('red').on;
 	var green = square.base.getChildByName('green').on;
 	bl.select(square.row, square.col, dude, red, green);
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+board.init = function() {
+	stage.addChild(media.get_background_img());
+
+	boardPriv.click = boardPriv.newTile('click', '000000');
+	boardPriv.click.alpha = 1;
+
+	boardPriv.grid = new Array();
+	for(var r = 0; r < BOARD_ROWS; r++) {
+		boardPriv.grid[r] = new Array();
+		for(var c = 0; c < BOARD_COLS; c++) {
+			boardPriv.grid[r][c] = new boardPriv.createSquare(r, c);
+			stage.addChild(boardPriv.grid[r][c].base);
+		}
+	}
+
+	boardPriv.colored_squares = new Array();
+	boardPriv.colored_squares['red'] = null;
+	boardPriv.colored_squares['green'] = null;
 }
 
