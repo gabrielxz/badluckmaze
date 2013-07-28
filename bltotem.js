@@ -16,7 +16,7 @@ totems.check = function() {
 		totemObj = totemsPriv.totems[i];
 
 		dude = board.get_item(totemObj.row, totemObj.col, 'Dude');
-		if (bl.isDudeActive(dude)) {
+		if (game.is_dude_active(dude)) {
 			totemsPriv.take(totemObj, dude);
 		}
 	}
@@ -83,10 +83,10 @@ totemsPriv.take = function(totemObj, dude) {
 
 	for(var i = 0; i < totemObj.badLuck; i++) {
 		// Give bad luck to other player
-		dice.lose_pip(bl.otherPlayer(newOwner));
+		dice.lose_pip(game.other_player(newOwner));
 
 		// Also remove bad luck given by previous owner
-		if(owner == bl.otherPlayer(newOwner)) {
+		if(owner == game.other_player(newOwner)) {
 			dice.gain_pip(newOwner);
 		}
 	}
@@ -96,7 +96,7 @@ totemsPriv.take = function(totemObj, dude) {
 		dice.lose_pip(newOwner);
 
 		// Also remove good luck given to previous owner
-		if(owner == bl.otherPlayer(newOwner)) {
+		if(owner == game.other_player(newOwner)) {
 			dice.gain_pip(newOwner);
 		}
 	}

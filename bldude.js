@@ -12,17 +12,19 @@ dudesPriv = new Object();
 //////////////////////////////////////////////////////////////////////////// 
 
 dudes.move = function(dudeObj, row, col) {
+	var squares;
 	board.remove_item('Dude', dudeObj);
 	dudeObj.row = row;
 	dudeObj.col = col;
 	board.add_item('Dude', dudeObj);
-	dudeObj.canMove = false;
 	media.play_sound("movement", 1000, 1);
+	dudeObj.has_moved = true;
+	squares = dudes.valid_attacks(dudeObj);
+	dudeObj.done = !(squares.length > 0);
 }
 
 dudes.attack = function(dudeObj) {
-	dudeObj.canAttack = false;
-	dudeObj.canMove = false;
+	dudeObj.done = true;
 }
 
 dudes.kill = function(dudeObj) {
@@ -30,8 +32,6 @@ dudes.kill = function(dudeObj) {
 	dudeObj.speed = 0;
 	dudeObj.range = 0;
 	dudeObj.power = 0;
-	dudeObj.canMove = false;
-	dudeObj.canAttack = false;
 	board.remove_item('Dude', dudeObj);
 	stage.update();
 	media.play_sound("deathScream", 0, 0.75);
@@ -39,7 +39,7 @@ dudes.kill = function(dudeObj) {
 	// TODO: Nice to have a dead portrait for fight screen
 
 	// Does this belong here?
-	bl.checkForWin();
+	game.check_for_win();
 }
 
 dudes.wound = function(dudeObj, amount) {
@@ -53,11 +53,10 @@ dudes.reset_all = function(player) {
 	var dudeObj;
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
-		dudeObj.canMove = true;
-		dudeObj.canAttack = true;
+		dudeObj.has_moved = false;
+		dudeObj.done = false;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PUBLIC ACCESSORS -- //////////////////////////
@@ -74,42 +73,34 @@ dudes.num_alive = function(player) {
 	return count;
 }
 
-dudes.num_available = function(player) {
-	var dudeObj, count = 0;
+dudes.valid_selections = function(player) {
+	var dudeObj, squares = new Array();
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
-		if(dudeObj.canMove || dudeObj.canAttack) {
-			count++;
+		if(!dudeObj.done) {
+			squares.push(board.get_square(dudeObj.row, dudeObj.col));
 		}
-	}
-	return count;
-}
-
-dudes.valid_moves = function(dudeObj) {
-	if(!dudeObj.canMove) {
-		return new Array();
-	}
-
-	var filter = function(row, col){return(bl.isValidMove(row, col));}
-
-	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.speed, filter);
-	if(squares.length <= 0) {
-		dudeObj.canMove = false;
 	}
 	return squares;
 }
 
-dudes.valid_attacks = function(dudeObj) {
-	if(!dudeObj.canAttack) {
+dudes.valid_moves = function(dudeObj) {
+	if(dudeObj.has_moved || dudeObj.done) {
 		return new Array();
 	}
 
-	var filter = function(row, col){return(bl.isValidAttack(row, col));}
+	var filter = function(row, col){return(game.is_valid_move(row, col));}
+	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.speed, filter);
+	return squares;
+}
 
-	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.range, filter);
-	if(squares.length <= 0 && !dudeObj.canMove) {
-		dudeObj.canAttack = false;
+dudes.valid_attacks = function(dudeObj) {
+	if(dudeObj.done) {
+		return new Array();
 	}
+
+	var filter = function(row, col){return(game.is_valid_attack(row, col));}
+	var squares = board.get_squares(dudeObj.row, dudeObj.col, dudeObj.range, filter);
 	return squares;
 }
 
@@ -122,8 +113,8 @@ dudesPriv.createDude = function(owner, row, col, type) {
 	this.row       = row;
 	this.col       = col;
 	this.type      = type;
-	this.canAttack = true;
-	this.canMove   = true;
+	this.has_moved = false;
+	this.done      = false;
 	this.speed     = dudesPriv.speed[type];
 	this.range     = dudesPriv.range[type];
 	this.power     = dudesPriv.power[type];

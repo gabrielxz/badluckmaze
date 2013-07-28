@@ -51,6 +51,15 @@ board.get_item = function(row, col, type) {
 	return square.base.getChildByName(type).item;
 }
 
+board.get_highlight = function(row, col, color) {
+	var square = boardPriv.grid[row][col];
+	return square.base.getChildByName(color).on;
+}
+
+board.get_square = function(row, col) {
+	return boardPriv.grid[row][col];
+}
+
 board.get_squares = function(row, col, radius, filter) {
 	var square, squares = new Array();
 
@@ -106,7 +115,7 @@ boardPriv.newTile = function(name, color) {
 	return tile;
 }
 
-boardPriv.createSquare = function(row, col) {
+boardPriv.createSquare = function(row, col, items) {
 	this.row   = row;
 	this.col   = col;
 	this.base  = new createjs.Container();
@@ -114,8 +123,11 @@ boardPriv.createSquare = function(row, col) {
 	this.base.hitArea = boardPriv.click;
 	this.base.addChild(boardPriv.newTile('red',   'FF0000'));
 	this.base.addChild(boardPriv.newTile('green', '00FF00'));
-	this.base.addChild(boardPriv.newSlot('Totem'));
-	this.base.addChild(boardPriv.newSlot('Dude'));
+	this.base.addChild(boardPriv.newTile('white', 'FFFFFF'));
+
+	for (var i in items) {
+		this.base.addChild(boardPriv.newSlot(items[i]));
+	}
 
 	this.base.x = H_OFFSET + (SQUARE_WIDTH/2+1) * col - (SQUARE_WIDTH/2+1) * (row + 1);
 	this.base.y = V_OFFSET + (SQUARE_HEIGHT/2+1) * col + (SQUARE_HEIGHT/2+1) * row;
@@ -140,17 +152,20 @@ boardPriv.highlight = function(color, alpha, squares) {
 
 boardPriv.onClick = function(click) {
 	var square = click.target.square;
-	var dude = square.base.getChildByName('Dude').item;
-	var red = square.base.getChildByName('red').on;
-	var green = square.base.getChildByName('green').on;
-	bl.select(square.row, square.col, dude, red, green);
+	var prev_square = boardPriv.selected;
+	if(prev_square == null) {
+		prev_square = square;
+	}
+	
+	game.select(square.row, square.col, prev_square.row, prev_square.col);
+	boardPriv.selected = square;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
 /////////////////////////// -- INITIALIZATION -- ///////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-board.init = function() {
+board.init = function(items) {
 	stage.addChild(media.get_background_img());
 
 	boardPriv.click = boardPriv.newTile('click', '000000');
@@ -160,7 +175,7 @@ board.init = function() {
 	for(var r = 0; r < BOARD_ROWS; r++) {
 		boardPriv.grid[r] = new Array();
 		for(var c = 0; c < BOARD_COLS; c++) {
-			boardPriv.grid[r][c] = new boardPriv.createSquare(r, c);
+			boardPriv.grid[r][c] = new boardPriv.createSquare(r, c, items);
 			stage.addChild(boardPriv.grid[r][c].base);
 		}
 	}
@@ -168,5 +183,8 @@ board.init = function() {
 	boardPriv.colored_squares = new Array();
 	boardPriv.colored_squares['red'] = null;
 	boardPriv.colored_squares['green'] = null;
+	boardPriv.colored_squares['white'] = null;
+	
+	boardPriv.selected = null;
 }
 
