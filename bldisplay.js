@@ -35,48 +35,25 @@ display.sum = function(vals) {
 }
 
 display.vertical = function(container, items, gap, border) {
-	var loc;
-	displayPriv.container_prep(container, items, gap, border);
-	container.w = container.w_max;
-	container.h = container.h_sum;
-
-	loc = border;
-	for(var i in items) {
-		items[i].x = items[i].x_steady;
-		items[i].y = items[i].y_flow;
-	}
+	displayPriv.container_prep(container, items, gap, border, 'max', 'sum');
+	displayPriv.align_items(container, items, gap, border, 'steady', 'flow');
 }
 
 display.horizontal = function(container, items, gap, border) {
-	var loc;
-	displayPriv.container_prep(container, items, gap, border);
-	container.w = container.w_sum;
-	container.h = container.h_max;
-
-	loc = border;
-	for(var i in items) {
-		items[i].x = items[i].x_flow;
-		items[i].y = items[i].y_steady;
-	}
+	displayPriv.container_prep(container, items, gap, border, 'sum', 'max');
+	displayPriv.align_items(container, items, gap, border, 'flow', 'steady');
 }
 
 display.stack = function(container, items, border) {
-	displayPriv.container_prep(container, items, 0, border);
-	container.w = container.w_max;
-	container.h = container.h_max;
-
-	for(var i in items) {
-		items[i].x = items[i].x_steady;
-		items[i].y = items[i].y_steady;
-	}
+	displayPriv.container_prep(container, items, 0, border, 'max', 'max');
+	displayPriv.align_items(container, items, 0, border, 'steady', 'steady');
 }
 
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-displayPriv.container_prep = function(container, items, gap, border) {
-	var x_loc, y_loc;
+displayPriv.container_prep = function(container, items, gap, border, w_align, h_align) {
 	var widths = new Array();
 	var heights = new Array();
 
@@ -85,37 +62,70 @@ displayPriv.container_prep = function(container, items, gap, border) {
 		heights.push(items[i].h);
 	}
 
-	container.w_sum = display.sum(widths) + gap * (widths.length - 1) + 2 * border;
-	container.w_max = display.max(widths) + 2 * border;
-	container.h_sum = display.sum(heights) + gap * (heights.length - 1) + 2 * border;
-	container.h_max = display.max(heights) + 2 * border;
+	if(w_align == 'sum') {
+		container.w = display.sum(widths) + gap * (widths.length - 1) + 2 * border;
+	} else if(w_align == 'max') {
+		container.w = display.max(widths) + 2 * border;
+	}
 
-	x_loc = border;
-	y_loc = border;
+	if(h_align == 'sum') {
+		container.h = display.sum(heights) + gap * (heights.length - 1) + 2 * border;
+	} else if(h_align == 'max') {
+		container.h = display.max(heights) + 2 * border;
+	}
+}
+
+displayPriv.align_items = function(container, items, gap, border, x_align, y_align) {
+	var x_flow = border;
+	var y_flow = border;
+	var x_steady, y_steady;
 	for(var i in items) {
 		switch(items[i].align) {
 			case 'center':
-				items[i].x_steady = (container.w_max - items[i].w) / 2;
-				items[i].y_steady = (container.h_max - items[i].h) / 2;
+				x_steady = (container.w - items[i].w) / 2;
+				y_steady = (container.h - items[i].h) / 2;
 				break;
 			case 'push':
-				items[i].x_steady = container.w_max - border - items[i].w;
-				items[i].y_steady = container.h_max - border - items[i].h;
+				x_steady = container.w - border - items[i].w;
+				y_steady = container.h - border - items[i].h;
 				break;
 			default:
-				items[i].x_steady = border;
-				items[i].y_steady = border;
+				x_steady = border;
+				y_steady = border;
 		}
-		items[i].x_flow = x_loc;
-		items[i].y_flow = y_loc;
 
-		x_loc += items[i].w + gap;
-		y_loc += items[i].h + gap;
+		if(x_align == 'steady') {
+			items[i].x = x_steady;
+		} else if(x_align == 'flow') {
+			items[i].x = x_flow;
+			x_flow += items[i].w + gap;
+		}
+
+		if(y_align == 'steady') {
+			items[i].y = y_steady;
+		} else if(y_align == 'flow') {
+			items[i].y = y_flow;
+			y_flow += items[i].h + gap;
+		}
 
 		if(items[i].align != 'spacer') {
 			container.addChild(items[i]);
 		}
 	}
+}
 
+//////////////////////////////////////////////////////////////////////////// 
+/////////////////////////// -- INITIALIZATION -- ///////////////////////////
+//////////////////////////////////////////////////////////////////////////// 
+
+display.init = function() {
+	var scaleW, scaleH, scale;
+	stage = new createjs.Stage("myCanvas");
+
+	scaleW = window.innerWidth / stage.canvas.width;
+	scaleH = window.innerHeight / stage.canvas.height;
+	scale = Math.min(scaleW, scaleH);
+	stage.scaleX = scale;
+	stage.scaleY = scale;
 }
 

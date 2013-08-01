@@ -1,8 +1,3 @@
-RED_PLAYER        = 0;
-BLUE_PLAYER       = 1;
-NO_PLAYER         = 99;
-NUM_SIDES_PER_DIE = 6;
-
 media = new Object();
 mediaPriv = new Object();
 

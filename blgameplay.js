@@ -1,8 +1,14 @@
-RED_PLAYER  = 0;
-BLUE_PLAYER = 1;
-SQUARE_MOVE   = 'white';
-SQUARE_ATTACK = 'red';
-SQUARE_SELECT = 'green';
+NUM_PLAYERS         = 2;
+RED_PLAYER          = 0;
+BLUE_PLAYER         = 1;
+NO_PLAYER           = 99;
+BOARD_ROWS          = 13;
+BOARD_COLS          = 13;
+NUM_DICE_PER_PLAYER = 2;
+NUM_SIDES_PER_DIE   = 6;
+SQUARE_MOVE         = 'white';
+SQUARE_ATTACK       = 'red';
+SQUARE_SELECT       = 'green';
 
 game = new Object();
 gamePriv = new Object();
@@ -15,7 +21,6 @@ game.select = function(row, col, prev_row, prev_col) {
 	var dude = board.get_item(row, col, 'Dude');
 	var prev_dude = board.get_item(prev_row, prev_col, 'Dude');
 	var select_dude = board.get_highlight(row, col, SQUARE_SELECT);
-	var valid_selections;
 
 	if(!select_dude && board.get_highlight(prev_row, prev_col, SQUARE_SELECT)) {
 		if(board.get_highlight(row, col, SQUARE_MOVE)) {
@@ -26,22 +31,17 @@ game.select = function(row, col, prev_row, prev_col) {
 	}
 
 	board.clear();
-
 	if(select_dude) {
 		board.highlight(SQUARE_MOVE, dudes.valid_moves(dude));
 		board.highlight(SQUARE_ATTACK, dudes.valid_attacks(dude));
 	}
-
-	valid_selections = dudes.valid_selections(gamePriv.curr_player);
-	// if length is 0, turn is over
-	board.highlight(SQUARE_SELECT, valid_selections );
-	stage.update();
+	gamePriv.update();
 }
 
-game.check_for_win = function() {
-	if (dudes.num_alive(game.other_player()) <= 0) {
-		// Win condition
-	}
+game.fight_end = function(attacker, defender, damage) {
+	dudes.attack(attacker, defender, damage);
+	board.clear();
+	gamePriv.update();
 }
 
 game.end_turn = function() {
@@ -81,8 +81,24 @@ game.is_valid_attack = function(row, col) {
 gamePriv.start_turn = function() {
 	board.clear();
 	dudes.reset_all(gamePriv.curr_player);
-	board.highlight(SQUARE_SELECT, dudes.valid_selections(gamePriv.curr_player));
 	totems.check();
+	gamePriv.update();
+}
+ 
+gamePriv.update = function() {
+	var squares;
+
+	if(dudes.num_alive(game.other_player()) <= 0) {
+		// TODO: Win condition
+	}
+
+	squares = dudes.valid_selections(gamePriv.curr_player);
+	board.highlight(SQUARE_SELECT, squares);
+
+	if(squares.length == 0) {
+		// TODO: Turn complete
+	}
+
 	stage.update();
 }
 
@@ -91,22 +107,16 @@ gamePriv.start_turn = function() {
 //////////////////////////////////////////////////////////////////////////// 
 
 game.init = function() {
-	var scaleW, scaleH, scale;
 	var board_items = ['Totem', 'Dude'];
-	stage = new createjs.Stage("myCanvas");
+	var board_colors = [SQUARE_MOVE, SQUARE_ATTACK, SQUARE_SELECT];
 
+	display.init();
 	media.init();
-	board.init(board_items);
+	board.init(board_items, board_colors);
 	dudes.init();
 	totems.init();
 	dice.init();
 	fight.init();
-
-	scaleW = window.innerWidth / stage.canvas.width;
-	scaleH = window.innerHeight / stage.canvas.height;
-	scale = Math.min(scaleW, scaleH);
-	stage.scaleX = scale;
-	stage.scaleY = scale;
 
 	gamePriv.curr_player = RED_PLAYER;
 	gamePriv.start_turn();

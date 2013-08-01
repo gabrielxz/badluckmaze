@@ -1,5 +1,3 @@
-NUM_DICE_PER_PLAYER = 2;
-
 fight = new Object();
 fightPriv = new Object();
 
@@ -36,9 +34,6 @@ fightPriv.attack = function() {
 
 	damage = offense + attacker.power - defense;
 	damage = Math.max(damage, 0);
-
-	dudes.attack(attacker);
-	dudes.wound(defender, damage);
 
 	fightPriv.offense_roll = offense;
 	fightPriv.defense_roll = defense;
@@ -90,16 +85,17 @@ fightPriv.onClick = function(click) {
 		fightPriv.attack();
 		fightPriv.roll.visible = 0;
 		fightPriv.done.visible = 1;
-	} else {
+		stage.update();
+	} else if(fightPriv.done.visible) {
 		fightPriv.display.visible = 0;
 		fightPriv.roll.visible = 1;
 		fightPriv.done.visible = 0;
+		game.fight_end(fightPriv.attacker, fightPriv.defender, fightPriv.damage);
 	}
-	stage.update();
 }
 
 //////////////////////////////////////////////////////////////////////////// 
-//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////// -- PRIVATE DISPLAY TREE -- //////////////////////// 
 //////////////////////////////////////////////////////////////////////////// 
 
 fightPriv.newButton = function() {
@@ -107,14 +103,14 @@ fightPriv.newButton = function() {
 	var container = new createjs.Container();
 	container.name = 'Roll';
 
-	item = new createjs.Text('Roll', '50pt sans-serif', 'white');
+	item = fightPriv.newText('Roll', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.align = 'center';
 	items.push(item);
 	fightPriv.roll = item;
 
-	item = new createjs.Text('Done', '50pt sans-serif', 'white');
+	item = fightPriv.newText('Done', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.align = 'center';
@@ -140,22 +136,22 @@ fightPriv.newResults = function() {
 	var container = new createjs.Container();
 	container.name = 'Results';
 
-	item = new createjs.Text('Attack:', '20pt sans-serif', 'white');
+	item = fightPriv.newText('Attack:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = new createjs.Text('Power:', '20pt sans-serif', 'white');
+	item = fightPriv.newText('Power:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = new createjs.Text('Defense:', '20pt sans-serif', 'white');
+	item = fightPriv.newText('Defense:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = new createjs.Text('Damage:', '20pt sans-serif', 'white');
+	item = fightPriv.newText('Damage:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -165,24 +161,24 @@ fightPriv.newResults = function() {
 	columns.push(column);
 	items.length = 0;
 
-	item = new createjs.Text('', '20pt sans-serif', 'white');
+	item = fightPriv.newText('', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = new createjs.Text('+', '20pt sans-serif', 'white');
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
-	item.align = 'center';
-	items.push(item);
-
-	item = new createjs.Text('-', '20pt sans-serif', 'white');
+	item = fightPriv.newText('+', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.align = 'center';
 	items.push(item);
 
-	item = new createjs.Text('=', '20pt sans-serif', 'white');
+	item = fightPriv.newText('-', 20);
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.align = 'center';
+	items.push(item);
+
+	item = fightPriv.newText('=', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.align = 'center';
@@ -193,25 +189,25 @@ fightPriv.newResults = function() {
 	columns.push(column);
 	items.length = 0;
 
-	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item = fightPriv.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.attack = item;
 
-	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item = fightPriv.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.power = item;
 
-	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item = fightPriv.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.defense = item;
 
-	item = new createjs.Text('##', '20pt sans-serif', 'white');
+	item = fightPriv.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -231,7 +227,7 @@ fightPriv.newVs = function() {
 	var container = new createjs.Container();
 	container.name = 'Vs';
 
-	item = new createjs.Text('VS', '50pt sans-serif', 'white');
+	item = fightPriv.newText('VS', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.align = 'center';
@@ -261,13 +257,13 @@ fightPriv.newStats = function(info) {
 	var container = new createjs.Container();
 	container.name = 'Stats';
 
-	item = new createjs.Text('== TITLE ==', '30pt sans-serif', 'white');
+	item = fightPriv.newText('== TITLE ==', 30);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	info.title = item;
 
-	item = new createjs.Text('== STAT ==', '30pt sans-serif', 'white');
+	item = fightPriv.newText('== STAT ==', 30);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -281,10 +277,7 @@ fightPriv.newStats = function(info) {
 fightPriv.newDice = function(info) {
 	var container = new createjs.Container();
 	var item, items = new Array();
-
 	container.name = 'Dice';
-	container.w = 0;
-	container.h = 0;
 
 	for(var i = 0; i < NUM_DICE_PER_PLAYER; i++) {
 		item = new createjs.Container();
@@ -372,6 +365,14 @@ fightPriv.newFightScreen = function() {
 	display.stack(container, items, 0);
 
 	return container;
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+fightPriv.newText = function(text, size) {
+	return new createjs.Text(text, size+'pt sans-serif', 'white');
 }
 
 fightPriv.createDudeInfo = function() {

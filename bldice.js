@@ -1,7 +1,3 @@
-NUM_PLAYERS = 2;
-NUM_DICE_PER_PLAYER = 2;
-NUM_SIDES_PER_DIE = 6;
-
 dice = new Object();
 dicePriv = new Object();
 

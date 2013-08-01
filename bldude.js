@@ -1,9 +1,3 @@
-BOARD_ROWS  = 13;
-BOARD_COLS  = 13;
-NUM_PLAYERS = 2;
-RED_PLAYER  = 0;
-BLUE_PLAYER = 1;
-
 dudes = new Object();
 dudesPriv = new Object();
 
@@ -13,18 +7,21 @@ dudesPriv = new Object();
 
 dudes.move = function(dudeObj, row, col) {
 	var squares;
+
+	media.play_sound("movement", 1000, 1);
 	board.remove_item('Dude', dudeObj);
 	dudeObj.row = row;
 	dudeObj.col = col;
 	board.add_item('Dude', dudeObj);
-	media.play_sound("movement", 1000, 1);
 	dudeObj.has_moved = true;
+
 	squares = dudes.valid_attacks(dudeObj);
 	dudeObj.done = !(squares.length > 0);
 }
 
-dudes.attack = function(dudeObj) {
-	dudeObj.done = true;
+dudes.attack = function(attacker, defender, damage) {
+	attacker.done = true;
+	dudes.wound(defender, damage);
 }
 
 dudes.kill = function(dudeObj) {
@@ -33,13 +30,8 @@ dudes.kill = function(dudeObj) {
 	dudeObj.range = 0;
 	dudeObj.power = 0;
 	board.remove_item('Dude', dudeObj);
-	stage.update();
 	media.play_sound("deathScream", 0, 0.75);
-
 	// TODO: Nice to have a dead portrait for fight screen
-
-	// Does this belong here?
-	game.check_for_win();
 }
 
 dudes.wound = function(dudeObj, amount) {
@@ -74,11 +66,12 @@ dudes.num_alive = function(player) {
 }
 
 dudes.valid_selections = function(player) {
-	var dudeObj, squares = new Array();
+	var dudeObj, square, squares = new Array();
 	for(var d in dudesPriv.dudes[player]) {
 		dudeObj = dudesPriv.dudes[player][d];
-		if(!dudeObj.done) {
-			squares.push(board.get_square(dudeObj.row, dudeObj.col));
+		if(dudeObj.health > 0 && !dudeObj.done) {
+			square = board.get_square(dudeObj.row, dudeObj.col);
+			squares.push(square);
 		}
 	}
 	return squares;

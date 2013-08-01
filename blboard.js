@@ -1,5 +1,3 @@
-BOARD_ROWS    = 13;
-BOARD_COLS    = 13;
 SQUARE_WIDTH  = 109;
 SQUARE_HEIGHT = 64;
 V_OFFSET      = 110;
@@ -31,15 +29,11 @@ board.remove_item = function(type, item) {
 }
 
 board.highlight = function(color, squares) {
-	boardPriv.colored_squares[color] = squares;
-	boardPriv.highlight(color, 0.25, squares);
+	boardPriv.highlight([color], squares, true);
 }
 
 board.clear = function() {
-	for(var color in boardPriv.colored_squares) {
-		squares = boardPriv.colored_squares[color];
-		boardPriv.highlight(color, 0, squares);
-	}
+	boardPriv.highlight(boardPriv.colors, boardPriv.all_squares, false);
 }
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -53,7 +47,7 @@ board.get_item = function(row, col, type) {
 
 board.get_highlight = function(row, col, color) {
 	var square = boardPriv.grid[row][col];
-	return square.base.getChildByName(color).on;
+	return square.base.getChildByName(color).visible;
 }
 
 board.get_square = function(row, col) {
@@ -90,24 +84,23 @@ boardPriv.newSlot = function(name) {
 	var slot = new createjs.Container();
 
 	slot.name = name;
-	slot.alpha = 1;
 	slot.x = SQUARE_WIDTH/2+1;
 	slot.y = Math.floor(SQUARE_HEIGHT * 0.75);
 
 	return slot;
 }
 
-boardPriv.newTile = function(name, color) {
+boardPriv.newTile = function(color) {
 	tile = new createjs.Shape();
 
-	tile.name = name;
+	tile.name = color;
 	tile.graphics.beginFill(color).moveTo(SQUARE_WIDTH/2+1, 0);
 	tile.graphics.lineTo(SQUARE_WIDTH+1, SQUARE_HEIGHT/2+1);
 	tile.graphics.lineTo(SQUARE_WIDTH/2+1, SQUARE_HEIGHT+1);
 	tile.graphics.lineTo(0, SQUARE_HEIGHT/2+1);
 	tile.graphics.lineTo(SQUARE_WIDTH/2+1, 0).endStroke();
-	tile.alpha = 0;
-	tile.on = false;
+	tile.alpha = 0.25;
+	tile.visible = false;
 	tile.x = 0;
 	tile.y = 0;
 	tile.cache(0, 0, SQUARE_WIDTH+1, SQUARE_HEIGHT+1);
@@ -115,15 +108,14 @@ boardPriv.newTile = function(name, color) {
 	return tile;
 }
 
-boardPriv.createSquare = function(row, col, items) {
+boardPriv.createSquare = function(row, col, items, colors) {
 	this.row   = row;
 	this.col   = col;
 	this.base  = new createjs.Container();
 
-	this.base.hitArea = boardPriv.click;
-	this.base.addChild(boardPriv.newTile('red',   'FF0000'));
-	this.base.addChild(boardPriv.newTile('green', '00FF00'));
-	this.base.addChild(boardPriv.newTile('white', 'FFFFFF'));
+	for (var i in colors) {
+		this.base.addChild(boardPriv.newTile(colors[i]));
+	}
 
 	for (var i in items) {
 		this.base.addChild(boardPriv.newSlot(items[i]));
@@ -133,20 +125,37 @@ boardPriv.createSquare = function(row, col, items) {
 	this.base.y = V_OFFSET + (SQUARE_HEIGHT/2+1) * col + (SQUARE_HEIGHT/2+1) * row;
 	this.base.name = 'grid' + row + 'x' + col;
 	this.base.square = this;
+	this.base.hitArea = boardPriv.click;
 	this.base.addEventListener('click', boardPriv.onClick);
+}
+
+boardPriv.newBoard = function(items, colors) {
+	var square, container = new createjs.Container();
+	container.name = 'Board';
+
+	container.addChild(media.get_background_img());
+
+	for (var i in boardPriv.all_squares) {
+		square = boardPriv.all_squares[i];
+		container.addChild(square.base);
+	}
+
+	return container;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-boardPriv.highlight = function(color, alpha, squares) {
-	var square, tile;
-	for(i in squares) {
-		square = squares[i];
-		tile = square.base.getChildByName(color);
-		tile.alpha = alpha;
-		tile.on = (alpha != 0);
+boardPriv.highlight = function(colors, squares, visible) {
+	var square, color, tile;
+	for(var s in squares) {
+		square = squares[s];
+		for(var c in colors) {
+			color = colors[c];
+			tile = square.base.getChildByName(color);
+			tile.visible = visible;
+		}
 	}
 }
 
@@ -165,26 +174,26 @@ boardPriv.onClick = function(click) {
 /////////////////////////// -- INITIALIZATION -- ///////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
 
-board.init = function(items) {
-	stage.addChild(media.get_background_img());
+board.init = function(items, colors) {
+	var square;
 
-	boardPriv.click = boardPriv.newTile('click', '000000');
-	boardPriv.click.alpha = 1;
+	boardPriv.click = boardPriv.newTile('black');
+	boardPriv.items = items;
+	boardPriv.colors = colors;
+	boardPriv.selected = null;
+	boardPriv.all_squares = new Array();
 
 	boardPriv.grid = new Array();
 	for(var r = 0; r < BOARD_ROWS; r++) {
 		boardPriv.grid[r] = new Array();
 		for(var c = 0; c < BOARD_COLS; c++) {
-			boardPriv.grid[r][c] = new boardPriv.createSquare(r, c, items);
-			stage.addChild(boardPriv.grid[r][c].base);
+			square = new boardPriv.createSquare(r, c, items, colors);
+			boardPriv.grid[r][c] = square;
+			boardPriv.all_squares.push(square);
 		}
 	}
 
-	boardPriv.colored_squares = new Array();
-	boardPriv.colored_squares['red'] = null;
-	boardPriv.colored_squares['green'] = null;
-	boardPriv.colored_squares['white'] = null;
-	
-	boardPriv.selected = null;
+	boardPriv.display = boardPriv.newBoard();
+	stage.addChild(boardPriv.display);
 }
 
