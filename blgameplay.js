@@ -158,6 +158,30 @@ gamePriv.newDiceDisplay = function(player) {
 	return container;
 }
 
+gamePriv.newButton = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'End Turn';
+
+	item = display.newText('End Turn', 40);
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.h_align = 'center';
+	item.v_align = 'center';
+	items.push(item);
+
+	display.stack(container, items, 10);
+
+	// Background
+	item = new createjs.Shape();
+	item.graphics.f('800000').rr(0, 0, container.w, container.h, 12);
+	container.addChildAt(item, 0);
+	container.hitArea = item;
+	container.addEventListener('click', game.end_turn);
+
+	return container;
+}
+
 gamePriv.newOverlay = function() {
 	var item, items = new Array();
 	var container = new createjs.Container();
@@ -173,6 +197,12 @@ gamePriv.newOverlay = function() {
 	item = gamePriv.newDiceDisplay(BLUE_PLAYER);
 	item.v_align = 'bottom';
 	item.h_align = 'left';
+	items.push(item);
+
+	// End turn button
+	item = gamePriv.newButton();
+	item.v_align = 'bottom';
+	item.h_align = 'right';
 	items.push(item);
 
 	display.fill(stage, container);

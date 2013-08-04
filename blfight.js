@@ -103,7 +103,7 @@ fightPriv.newButton = function() {
 	var container = new createjs.Container();
 	container.name = 'Roll';
 
-	item = fightPriv.newText('Roll', 50);
+	item = display.newText('Roll', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
@@ -111,7 +111,7 @@ fightPriv.newButton = function() {
 	items.push(item);
 	fightPriv.roll = item;
 
-	item = fightPriv.newText('Done', 50);
+	item = display.newText('Done', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
@@ -138,22 +138,22 @@ fightPriv.newResults = function() {
 	var container = new createjs.Container();
 	container.name = 'Results';
 
-	item = fightPriv.newText('Attack:', 20);
+	item = display.newText('Attack:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = fightPriv.newText('Power:', 20);
+	item = display.newText('Power:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = fightPriv.newText('Defense:', 20);
+	item = display.newText('Defense:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = fightPriv.newText('Damage:', 20);
+	item = display.newText('Damage:', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -163,24 +163,24 @@ fightPriv.newResults = function() {
 	columns.push(column);
 	items.length = 0;
 
-	item = fightPriv.newText('', 20);
+	item = display.newText('', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 
-	item = fightPriv.newText('+', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
-	item.h_align = 'center';
-	items.push(item);
-
-	item = fightPriv.newText('-', 20);
+	item = display.newText('+', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	items.push(item);
 
-	item = fightPriv.newText('=', 20);
+	item = display.newText('-', 20);
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	item.h_align = 'center';
+	items.push(item);
+
+	item = display.newText('=', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
@@ -191,25 +191,25 @@ fightPriv.newResults = function() {
 	columns.push(column);
 	items.length = 0;
 
-	item = fightPriv.newText('##', 20);
+	item = display.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.attack = item;
 
-	item = fightPriv.newText('##', 20);
+	item = display.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.power = item;
 
-	item = fightPriv.newText('##', 20);
+	item = display.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.defense = item;
 
-	item = fightPriv.newText('##', 20);
+	item = display.newText('##', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -229,7 +229,7 @@ fightPriv.newVs = function() {
 	var container = new createjs.Container();
 	container.name = 'Vs';
 
-	item = fightPriv.newText('VS', 50);
+	item = display.newText('VS', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
@@ -259,13 +259,13 @@ fightPriv.newStats = function(info) {
 	var container = new createjs.Container();
 	container.name = 'Stats';
 
-	item = fightPriv.newText('== TITLE ==', 30);
+	item = display.newText('== TITLE ==', 30);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
 	info.title = item;
 
-	item = fightPriv.newText('== STAT ==', 30);
+	item = display.newText('== STAT ==', 30);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
 	items.push(item);
@@ -373,10 +373,6 @@ fightPriv.newFightScreen = function() {
 //////////////////////////////////////////////////////////////////////////// 
 //////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
 //////////////////////////////////////////////////////////////////////////// 
-
-fightPriv.newText = function(text, size) {
-	return new createjs.Text(text, size+'pt sans-serif', 'white');
-}
 
 fightPriv.createDudeInfo = function() {
 	this.portrait = null;
