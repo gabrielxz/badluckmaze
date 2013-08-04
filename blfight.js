@@ -106,14 +106,16 @@ fightPriv.newButton = function() {
 	item = fightPriv.newText('Roll', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
+	item.v_align = 'center';
 	items.push(item);
 	fightPriv.roll = item;
 
 	item = fightPriv.newText('Done', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
+	item.v_align = 'center';
 	item.visible = 0;
 	items.push(item);
 	fightPriv.done = item;
@@ -169,19 +171,19 @@ fightPriv.newResults = function() {
 	item = fightPriv.newText('+', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	item = fightPriv.newText('-', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	item = fightPriv.newText('=', 20);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	column = new createjs.Container();
@@ -230,21 +232,21 @@ fightPriv.newVs = function() {
 	item = fightPriv.newText('VS', 50);
 	item.w = item.getMeasuredWidth();
 	item.h = item.getMeasuredHeight();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	item = new display.createSpacer(0, 50);
 	items.push(item);
 	
 	item = fightPriv.newResults();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 	
 	item = new display.createSpacer(0, 200);
 	items.push(item);
 	
 	item = fightPriv.newButton();
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 	
 	display.vertical(container, items, 10, 0);
@@ -302,18 +304,18 @@ fightPriv.newDude = function(info) {
 
 	item = new createjs.Container();
 	item.name = 'Portrait';
-	item.align = 'center';
+	item.h_align = 'center';
 	item.w = 300;
 	item.h = 400;
 	items.push(item);
 	info.portrait = item;
 
 	item = fightPriv.newStats(info);
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	item = fightPriv.newDice(info);
-	item.align = 'center';
+	item.h_align = 'center';
 	items.push(item);
 
 	display.vertical(container, items, 10, 0);
@@ -332,7 +334,7 @@ fightPriv.newFightPage = function() {
 	fightPriv.attacker_info = info;
 
 	item = fightPriv.newVs();
-	item.align = 'push';
+	item.v_align = 'bottom';
 	items.push(item);
 
 	info = new fightPriv.createDudeInfo()
@@ -359,7 +361,8 @@ fightPriv.newFightScreen = function() {
 	items.push(item);
 
 	item = fightPriv.newFightPage();
-	item.align = 'center';
+	item.h_align = 'center';
+	item.v_align = 'center';
 	items.push(item);
 
 	display.stack(container, items, 0);

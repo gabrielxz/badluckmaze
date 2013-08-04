@@ -68,7 +68,7 @@ totemsPriv.take = function(totemObj, dude) {
 		return;
 	}
 
-	if(prev_owner != null) {
+	if(prev_owner != NO_PLAYER) {
 		// Undo previous bad luck given to new owner
 		totemsPriv.good_luck(new_owner, totemObj.badLuck);
 

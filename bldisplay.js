@@ -8,8 +8,7 @@ displayPriv = new Object();
 display.newModalCover = function() {
 	var item = new createjs.Shape();
 	item.name = 'Modal';
-	item.w = stage.canvas.width;
-	item.h = stage.canvas.height;
+	display.fill(stage, item);
 	item.graphics.f('FFFFFF').r(0, 0, item.w, item.h);
 	item.alpha = 0.5;
 
@@ -19,7 +18,7 @@ display.newModalCover = function() {
 display.createSpacer = function(width, height) {
 	this.w = width;
 	this.h = height;
-	this.align = 'spacer';
+	this.spacer = true;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -32,6 +31,13 @@ display.max = function(vals) {
 
 display.sum = function(vals) {
 	return vals.reduce(function(p, c, i, arr){return p+c;}, 0);
+}
+
+display.fill = function(container, item) {
+	item.x = 0;
+	item.y = 0;
+	item.w = container.w;
+	item.h = container.h;
 }
 
 display.vertical = function(container, items, gap, border) {
@@ -49,6 +55,10 @@ display.stack = function(container, items, border) {
 	displayPriv.align_items(container, items, 0, border, 'steady', 'steady');
 }
 
+display.place = function(container, items, border) {
+	displayPriv.align_items(container, items, 0, border, 'steady', 'steady');
+}
+
 //////////////////////////////////////////////////////////////////////////// 
 ////////////////////////// -- PRIVATE FUNCTIONS -- /////////////////////////
 //////////////////////////////////////////////////////////////////////////// 
@@ -63,54 +73,74 @@ displayPriv.container_prep = function(container, items, gap, border, w_align, h_
 	}
 
 	if(w_align == 'sum') {
-		container.w = display.sum(widths) + gap * (widths.length - 1) + 2 * border;
+		container.w = display.sum(widths) + gap * (widths.length - 1);
 	} else if(w_align == 'max') {
-		container.w = display.max(widths) + 2 * border;
+		container.w = display.max(widths);
 	}
 
 	if(h_align == 'sum') {
-		container.h = display.sum(heights) + gap * (heights.length - 1) + 2 * border;
+		container.h = display.sum(heights) + gap * (heights.length - 1);
 	} else if(h_align == 'max') {
-		container.h = display.max(heights) + 2 * border;
+		container.h = display.max(heights);
 	}
+
+	container.w += 2 * border;
+	container.h += 2 * border;
 }
 
 displayPriv.align_items = function(container, items, gap, border, x_align, y_align) {
 	var x_flow = border;
 	var y_flow = border;
-	var x_steady, y_steady;
-	for(var i in items) {
-		switch(items[i].align) {
-			case 'center':
-				x_steady = (container.w - items[i].w) / 2;
-				y_steady = (container.h - items[i].h) / 2;
-				break;
-			case 'push':
-				x_steady = container.w - border - items[i].w;
-				y_steady = container.h - border - items[i].h;
-				break;
-			default:
-				x_steady = border;
-				y_steady = border;
-		}
 
+	for(var i in items) {
 		if(x_align == 'steady') {
-			items[i].x = x_steady;
+			displayPriv.place_horizontal(container, items[i], border);
 		} else if(x_align == 'flow') {
 			items[i].x = x_flow;
 			x_flow += items[i].w + gap;
 		}
 
 		if(y_align == 'steady') {
-			items[i].y = y_steady;
+			displayPriv.place_vertical(container, items[i], border);
 		} else if(y_align == 'flow') {
 			items[i].y = y_flow;
 			y_flow += items[i].h + gap;
 		}
 
-		if(items[i].align != 'spacer') {
+		if(!items[i].spacer) {
 			container.addChild(items[i]);
+
+			// FOR TESTING ONLY
+			//var box = new createjs.Shape();
+			//box.graphics.s('A0A0A0').r(items[i].x, items[i].y, items[i].w, items[i].h);
+			//container.addChildAt(box, 0);
 		}
+	}
+}
+
+displayPriv.place_horizontal = function(container, item, border) {
+	switch(item.h_align) {
+		case 'center':
+			item.x = (container.w - item.w) / 2;
+			break;
+		case 'right':
+			item.x = container.w - border - item.w;
+			break;
+		default:
+			item.x = border;
+	}
+}
+
+displayPriv.place_vertical = function(container, item, border) {
+	switch(item.v_align) {
+		case 'center':
+			item.y = (container.h - item.h) / 2;
+			break;
+		case 'bottom':
+			item.y = container.h - border - item.h;
+			break;
+		default:
+			item.y = border;
 	}
 }
 
@@ -121,10 +151,12 @@ displayPriv.align_items = function(container, items, gap, border, x_align, y_ali
 display.init = function() {
 	var scaleW, scaleH, scale;
 	stage = new createjs.Stage("myCanvas");
+	stage.w = stage.canvas.width;
+	stage.h = stage.canvas.height;
 
-	scaleW = window.innerWidth / stage.canvas.width;
-	scaleH = window.innerHeight / stage.canvas.height;
-	scale = Math.min(scaleW, scaleH);
+	scaleW = window.innerWidth / stage.w;
+	scaleH = window.innerHeight / stage.h;
+	scale = Math.min(scaleW, scaleH) * 0.95;
 	stage.scaleX = scale;
 	stage.scaleY = scale;
 }

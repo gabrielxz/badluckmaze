@@ -99,7 +99,86 @@ gamePriv.update = function() {
 		// TODO: Turn complete
 	}
 
+	gamePriv.update_dice();
 	stage.update();
+}
+
+gamePriv.update_dice = function() {
+	var container;
+	for(var p = 0; p < NUM_PLAYERS; p++) {
+		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+			for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+				container = gamePriv.display_hooks[p][d][s];
+				container.removeAllChildren();
+				container.addChild(dice.get_side_img(p, d, s));
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE DISPLAY TREE -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+gamePriv.newDieDisplay = function(player, die) {
+	var container = new createjs.Container();
+	var item, items = new Array();
+	container.name = 'Die';
+
+	for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
+		item = new createjs.Container();
+		item.name = 'Side ' + s;
+		item.w = 65;
+		item.h = 65;
+		item.scaleX = 0.5;
+		item.scaleY = 0.5;
+		items.push(item);
+		gamePriv.display_hooks[player][die][s] = item;
+	}
+
+	display.horizontal(container, items, 10, 0);
+
+	return container;
+}
+
+gamePriv.newDiceDisplay = function(player) {
+	var container = new createjs.Container();
+	var item, items = new Array();
+	container.name = 'Dice';
+
+	gamePriv.display_hooks[player] = new Array();
+	for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
+		gamePriv.display_hooks[player][d] = new Array();
+		item = gamePriv.newDieDisplay(player, d);
+		items.push(item);
+	}
+
+	display.vertical(container, items, 20, 0);
+
+	return container;
+}
+
+gamePriv.newOverlay = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Game Overlay';
+
+	// Red player dice
+	item = gamePriv.newDiceDisplay(RED_PLAYER);
+	item.v_align = 'top';
+	item.h_align = 'right';
+	items.push(item);
+
+	// Blue player dice
+	item = gamePriv.newDiceDisplay(BLUE_PLAYER);
+	item.v_align = 'bottom';
+	item.h_align = 'left';
+	items.push(item);
+
+	display.fill(stage, container);
+	display.place(container, items, 20);
+
+	return container;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -117,6 +196,10 @@ game.init = function() {
 	totems.init();
 	dice.init();
 	fight.init();
+
+	gamePriv.display_hooks = new Array();
+	gamePriv.overlay = gamePriv.newOverlay();
+	stage.addChild(gamePriv.overlay);
 
 	gamePriv.curr_player = RED_PLAYER;
 	gamePriv.start_turn();
