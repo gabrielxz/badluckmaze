@@ -114,6 +114,7 @@ dudesPriv.createDude = function(owner, row, col, type) {
 	this.health    = dudesPriv.health[type];
 	this.image     = media.get_dude_img(type, owner);
 	this.portrait  = media.get_portrait_img(type);
+	this.title     = dudesPriv.player_map[owner] + type;
 	board.add_item('Dude', this);
 }
 
@@ -138,6 +139,10 @@ dudes.init = function() {
 	dudesPriv.health['Archer'] =  8;
 	dudesPriv.health['Rogue'] =   16;
 	dudesPriv.health['Warrior'] = 32;
+
+	dudesPriv.player_map = new Array();
+	dudesPriv.player_map[RED_PLAYER]  = 'Red ';
+	dudesPriv.player_map[BLUE_PLAYER] = 'Blue ';
 
 	dudesPriv.dudes = new Array();
 	dudesPriv.dudes[RED_PLAYER] = new Array();

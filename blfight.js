@@ -72,7 +72,7 @@ fightPriv.set_dude_info = function(info, dude) {
 	info.portrait.removeAllChildren();
 	info.portrait.addChild(dude.portrait);
 
-	info.title.text = fightPriv.player_map[dude.owner] + dude.type;
+	info.title.text = dude.title;
 
 	for(i in info.dice) {
 		info.dice[i].removeAllChildren();
@@ -104,16 +104,12 @@ fightPriv.newButton = function() {
 	container.name = 'Roll';
 
 	item = display.newText('Roll', 50);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	item.v_align = 'center';
 	items.push(item);
 	fightPriv.roll = item;
 
 	item = display.newText('Done', 50);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	item.v_align = 'center';
 	item.visible = 0;
@@ -126,6 +122,8 @@ fightPriv.newButton = function() {
 	item = new createjs.Shape();
 	item.graphics.f('AA0000').rr(0, 0, container.w, container.h, 12);
 	container.addChildAt(item, 0);
+
+	// Button
 	container.hitArea = item;
 	container.addEventListener('click', fightPriv.onClick);
 
@@ -139,23 +137,15 @@ fightPriv.newResults = function() {
 	container.name = 'Results';
 
 	item = display.newText('Attack:', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 
 	item = display.newText('Power:', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 
 	item = display.newText('Defense:', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 
 	item = display.newText('Damage:', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 
 	column = new createjs.Container();
@@ -164,25 +154,17 @@ fightPriv.newResults = function() {
 	items.length = 0;
 
 	item = display.newText('', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 
 	item = display.newText('+', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	items.push(item);
 
 	item = display.newText('-', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	items.push(item);
 
 	item = display.newText('=', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	items.push(item);
 
@@ -192,26 +174,18 @@ fightPriv.newResults = function() {
 	items.length = 0;
 
 	item = display.newText('##', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.attack = item;
 
 	item = display.newText('##', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.power = item;
 
 	item = display.newText('##', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.defense = item;
 
 	item = display.newText('##', 20);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	fightPriv.results_info.damage = item;
 
@@ -230,8 +204,6 @@ fightPriv.newVs = function() {
 	container.name = 'Vs';
 
 	item = display.newText('VS', 50);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	items.push(item);
 
@@ -260,14 +232,10 @@ fightPriv.newStats = function(info) {
 	container.name = 'Stats';
 
 	item = display.newText('== TITLE ==', 30);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	info.title = item;
 
 	item = display.newText('== STAT ==', 30);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	items.push(item);
 	info.stat = item;
 
@@ -401,10 +369,6 @@ fight.init = function() {
 	fightPriv.defender = null;
 	fightPriv.defender_info = null;
 	fightPriv.results_info = new fightPriv.createResultsInfo();
-
-	fightPriv.player_map = new Array();
-	fightPriv.player_map[RED_PLAYER]  = 'Red ';
-	fightPriv.player_map[BLUE_PLAYER] = 'Blue ';
 
 	fightPriv.display = fightPriv.newFightScreen();
 	stage.addChild(fightPriv.display);

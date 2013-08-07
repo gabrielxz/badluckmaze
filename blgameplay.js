@@ -22,11 +22,14 @@ game.select = function(row, col, prev_row, prev_col) {
 	var prev_dude = board.get_item(prev_row, prev_col, 'Dude');
 	var select_dude = board.get_highlight(row, col, SQUARE_SELECT);
 
+	gamePriv.display_dude = dude;
+
 	if(!select_dude && board.get_highlight(prev_row, prev_col, SQUARE_SELECT)) {
 		if(board.get_highlight(row, col, SQUARE_MOVE)) {
 			dudes.move(prev_dude, row, col);
 		} else if (board.get_highlight(row, col, SQUARE_ATTACK)) {
 			fight.begin(prev_dude, dude);
+			gamePriv.display_dude = null;
 		}
 	}
 
@@ -99,21 +102,54 @@ gamePriv.update = function() {
 		// TODO: Turn complete
 	}
 
-	gamePriv.update_dice();
+	gamePriv.update_dice_display();
+	gamePriv.update_dude_display();
 	stage.update();
 }
 
-gamePriv.update_dice = function() {
+gamePriv.update_dude_display = function() {
+	var dude = gamePriv.display_dude;
+	if(!dude) {
+		gamePriv.hooks.dude_display.visible = false;
+		return;
+	}
+
+	gamePriv.hooks.title.text = dude.title;
+	gamePriv.hooks.portrait.removeAllChildren();
+	gamePriv.hooks.portrait.addChild(dude.portrait);
+	gamePriv.hooks.speed.text = dude.speed;
+	gamePriv.hooks.range.text = dude.range;
+	gamePriv.hooks.power.text = dude.power;
+	gamePriv.hooks.health.text = dude.health;
+
+	gamePriv.hooks.dude_display.visible = true;
+}
+
+gamePriv.update_dice_display = function() {
 	var container;
 	for(var p = 0; p < NUM_PLAYERS; p++) {
 		for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
 			for(var s = 0; s < NUM_SIDES_PER_DIE; s++) {
-				container = gamePriv.display_hooks[p][d][s];
+				container = gamePriv.hooks.dice[p][d][s];
 				container.removeAllChildren();
 				container.addChild(dice.get_side_img(p, d, s));
 			}
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////// 
+//////////////////////// -- PRIVATE CONSTRUCTORS -- //////////////////////// 
+//////////////////////////////////////////////////////////////////////////// 
+
+gamePriv.createDisplayHooks = function() {
+	this.dice = new Array();
+	this.dude_display = null;
+	this.portrait = null;
+	this.speed = null;
+	this.range = null;
+	this.power = null;
+	this.health = null;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
@@ -133,7 +169,7 @@ gamePriv.newDieDisplay = function(player, die) {
 		item.scaleX = 0.5;
 		item.scaleY = 0.5;
 		items.push(item);
-		gamePriv.display_hooks[player][die][s] = item;
+		gamePriv.hooks.dice[player][die][s] = item;
 	}
 
 	display.horizontal(container, items, 10, 0);
@@ -146,14 +182,116 @@ gamePriv.newDiceDisplay = function(player) {
 	var item, items = new Array();
 	container.name = 'Dice';
 
-	gamePriv.display_hooks[player] = new Array();
+	gamePriv.hooks.dice[player] = new Array();
 	for(var d = 0; d < NUM_DICE_PER_PLAYER; d++) {
-		gamePriv.display_hooks[player][d] = new Array();
+		gamePriv.hooks.dice[player][d] = new Array();
 		item = gamePriv.newDieDisplay(player, d);
 		items.push(item);
 	}
 
 	display.vertical(container, items, 20, 0);
+
+	return container;
+}
+
+gamePriv.newDudeStatsLabels = function() {
+	var item, items = new Array();
+	var column, columns = new Array();
+	var container = new createjs.Container();
+	container.name = 'Stats';
+
+	item = display.newText('SPEED:', 20);
+	items.push(item);
+
+	item = display.newText('RANGE:', 20);
+	items.push(item);
+
+	item = display.newText('POWER:', 20);
+	items.push(item);
+
+	item = display.newText('HEALTH:', 20);
+	items.push(item);
+
+	display.vertical(container, items, 10, 0);
+
+	return container;
+}
+
+gamePriv.newDudeStats = function() {
+	var item, items = new Array();
+	var column, columns = new Array();
+	var container = new createjs.Container();
+	container.name = 'Stats';
+
+	item = display.newText('##', 20);
+	items.push(item);
+	gamePriv.hooks.speed = item;
+
+	item = display.newText('##', 20);
+	items.push(item);
+	gamePriv.hooks.range = item;
+
+	item = display.newText('##', 20);
+	items.push(item);
+	gamePriv.hooks.power = item;
+
+	item = display.newText('##', 20);
+	items.push(item);
+	gamePriv.hooks.health = item;
+
+	display.vertical(container, items, 10, 0);
+
+	return container;
+}
+
+gamePriv.newDudeInfoDisplay = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Dude Info Display';
+
+	item = new createjs.Container();
+	item.name = 'Portrait';
+	item.h_align = 'center';
+	item.w = 150;
+	item.h = 200;
+	item.scaleX = 0.5;
+	item.scaleY = 0.5;
+	items.push(item);
+	gamePriv.hooks.portrait = item;
+
+	item = gamePriv.newDudeStatsLabels();
+	item.v_align = 'center';
+	items.push(item);
+
+	item = gamePriv.newDudeStats();
+	item.v_align = 'center';
+	items.push(item);
+
+	display.horizontal(container, items, 10, 0);
+
+	return container;
+}
+
+gamePriv.newDudeDisplay = function() {
+	var item, items = new Array();
+	var container = new createjs.Container();
+	container.name = 'Dude Display';
+
+	item = display.newText('== TITLE ==', 30);
+	item.h_align = 'center';
+	items.push(item);
+	gamePriv.hooks.title = item;
+
+	item = gamePriv.newDudeInfoDisplay();
+	items.push(item);
+
+	display.vertical(container, items, 10, 10);
+
+	// Background
+	item = new createjs.Shape();
+	item.graphics.f('888888').rr(0, 0, container.w, container.h, 12);
+	item.alpha = 0.5
+	container.addChildAt(item, 0);
 
 	return container;
 }
@@ -164,8 +302,6 @@ gamePriv.newButton = function() {
 	container.name = 'End Turn';
 
 	item = display.newText('End Turn', 40);
-	item.w = item.getMeasuredWidth();
-	item.h = item.getMeasuredHeight();
 	item.h_align = 'center';
 	item.v_align = 'center';
 	items.push(item);
@@ -186,6 +322,14 @@ gamePriv.newOverlay = function() {
 	var item, items = new Array();
 	var container = new createjs.Container();
 	container.name = 'Game Overlay';
+
+	// Dude info
+	item = gamePriv.newDudeDisplay();
+	item.v_align = 'top';
+	item.h_align = 'left';
+	item.visible = false;
+	items.push(item);
+	gamePriv.hooks.dude_display = item;
 
 	// Red player dice
 	item = gamePriv.newDiceDisplay(RED_PLAYER);
@@ -227,7 +371,7 @@ game.init = function() {
 	dice.init();
 	fight.init();
 
-	gamePriv.display_hooks = new Array();
+	gamePriv.hooks = new gamePriv.createDisplayHooks();
 	gamePriv.overlay = gamePriv.newOverlay();
 	stage.addChild(gamePriv.overlay);
 

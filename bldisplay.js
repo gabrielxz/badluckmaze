@@ -23,7 +23,10 @@ display.createSpacer = function(width, height) {
 
 
 display.newText = function(text, size) {
-	return new createjs.Text(text, size+'pt sans-serif', 'white');
+	var item = new createjs.Text(text, size+'pt sans-serif', 'white');
+	item.w = item.getMeasuredWidth();
+	item.h = item.getMeasuredHeight();
+	return item;
 }
 
 //////////////////////////////////////////////////////////////////////////// 
