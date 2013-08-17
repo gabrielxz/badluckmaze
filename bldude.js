@@ -31,7 +31,6 @@ dudes.kill = function(dudeObj) {
 	dudeObj.power = 0;
 	board.remove_item('Dude', dudeObj);
 	media.play_sound("deathScream", 0, 0.75);
-	// TODO: Nice to have a dead portrait for fight screen
 }
 
 dudes.wound = function(dudeObj, amount) {
@@ -162,8 +161,8 @@ dudes.init = function() {
 	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 12, 11, 'Archer'));
 
 	// FOR TESTING ONLY
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 4, 5,  'Archer'));
-	dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 5, 5,  'Warrior'));
-	dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 6, 5,  'Rogue'));
+	//dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 4, 5,  'Archer'));
+	//dudesPriv.dudes[RED_PLAYER].push(new dudesPriv.createDude(RED_PLAYER, 5, 5,  'Warrior'));
+	//dudesPriv.dudes[BLUE_PLAYER].push(new dudesPriv.createDude(BLUE_PLAYER, 6, 5,  'Rogue'));
 }
 
